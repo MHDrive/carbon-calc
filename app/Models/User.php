@@ -3,20 +3,31 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Plank\Metable\Metable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia, HasAvatar
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, InteractsWithMedia, Metable;
 
+    protected $with = ['meta', 'media'];
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
+        'username',
         'name',
         'email',
         'password',
@@ -43,5 +54,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        $media = $this->getFirstMediaUrl('avatars');
+
+        // Jika media ditemukan, kembalikan URL-nya, jika tidak, kembalikan null
+        return $media ?: null;
+    }
+
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Fit::Contain, 100, 100)
+            ->nonQueued();
+    }
+
+    public function scopeMediaUserFirst($query, $collectionName)
+    {
+        return $query->whereHas('media', function ($q) use ($collectionName) {
+            $q->where('collection_name', $collectionName);
+        });
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class, 'user_id', 'id');
     }
 }
