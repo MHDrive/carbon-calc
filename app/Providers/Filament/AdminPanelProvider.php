@@ -6,12 +6,15 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
-use App\Filament\Pages\Auth\MyLogin;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Filament\Pages\ProfileUser;
+use App\Filament\Pages\Auth\MyLogin;
 use App\Filament\Pages\Auth\MyRegister;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use App\Filament\Pages\Auth\RequestPasswordReset;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -30,7 +33,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(MyLogin::class)
             ->registration(MyRegister::class)
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class) 
+            ->profile(ProfileUser::class ,isSimple: false)
             ->colors([
                 'primary' => Color::Amber,
             ])
