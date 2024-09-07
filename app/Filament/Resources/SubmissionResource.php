@@ -20,6 +20,8 @@ class SubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $pluralModelLabel = 'verifikasi pengajuan';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -122,27 +124,20 @@ class SubmissionResource extends Resource
                         ->label('Email address')
                         ->email()
                         ->required(),
-                    Forms\Components\Group::make()
-                        ->relationship('meta')
-                        ->schema([
-                            Forms\Components\TextInput::make('number_unique')
-                                ->label('NPM/NIP/NIK')
-                                ->required(),
-                        ]),
+                    Forms\Components\TextInput::make('number_unique')
+                        ->label('NPM/NIP/NIK')
+                        ->required(),
+                    Forms\Components\Select::make('institute')
+                        ->label('Instansi/Institusi')
+                        ->relationship('institutes', 'name')
+                        ->searchable()
+                        ->required(),
+                    Forms\Components\TextInput::make('phone_number')
+                        ->label('No HP')
+                        ->required(),
                 ]),
-            Forms\Components\TextInput::make('meta.number_unique')
-                ->label('NPM/NIP/NIK')
-                ->required(),
-            Forms\Components\TextInput::make('meta.agency')
-                ->label('Instansi/Institusi')
-                ->required(),
-            Forms\Components\TextInput::make('meta.telephone')
-                ->label('No HP')
-                ->required(),
             Forms\Components\TextInput::make('media.created_at')
                 ->label('Tanggal Upload')
-                // ->formatStateUsing(fn($state, $record) => dd($state))
-                ->required(),
         ];
     }
 }

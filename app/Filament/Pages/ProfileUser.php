@@ -71,15 +71,14 @@ class ProfileUser extends BaseProfile
                                     ->label('Username')
                                     ->minLength(3)
                                     ->maxLength(50),
-                                Forms\Components\TextInput::make('meta.number_unique')
+                                Forms\Components\TextInput::make('number_unique')
                                     ->label('NPM/NIP/NIK')
                                     ->minLength(10)
                                     ->maxLength(50),
-                                Forms\Components\TextInput::make('meta.agency')
+                                Forms\Components\Select::make('institutes')
                                     ->label('Instansi/Institusi')
-                                    ->minLength(10)
-                                    ->maxLength(100),
-                                Forms\Components\TextInput::make('meta.telephone')
+                                    ->relationship('institutes', 'name'),
+                                Forms\Components\TextInput::make('phone_number')
                                     ->label('Nomor HP')
                                     ->numeric()
                                     ->minLength(10)
@@ -105,19 +104,7 @@ class ProfileUser extends BaseProfile
     // Menangani Proses Update Profile
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $data['name'] = $data['first_name'] . ' ' . ($data['last_name'] ?? '');
         $record->update($data);
-        if (data_get($data, 'meta')) {
-            $record->setManyMeta($data['meta']);
-        }
-
         return $record;
-    }
-
-    // mengatur data form fill profile
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['meta'] = $this->getUser()->getAllMeta()->toArray();
-        return $data;
     }
 }

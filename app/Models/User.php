@@ -9,6 +9,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +19,7 @@ class User extends Authenticatable implements HasMedia, HasAvatar
 {
     use HasFactory, Notifiable, InteractsWithMedia, Metable;
 
-    protected $with = ['meta', 'media'];
+    protected $with = ['institutes', 'media'];
     /**
      * The attributes that are mass assignable.
      *
@@ -83,5 +84,10 @@ class User extends Authenticatable implements HasMedia, HasAvatar
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class, 'user_id', 'id');
+    }
+
+    public function institutes(): BelongsTo
+    {
+        return $this->belongsTo(Institute::class, 'institute_id', 'id');
     }
 }

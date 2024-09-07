@@ -25,6 +25,8 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $pluralModelLabel = 'Pengguna';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -74,10 +76,10 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->before(function ($record) {
-                        $data = $record->purgeMeta();
-                        return $data;
-                    }),
+                // ->before(function ($record) {
+                //     $data = $record->purgeMeta();
+                //     return $data;
+                // }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -153,15 +155,42 @@ class UserResource extends Resource
                 ->label('Username')
                 ->minLength(3)
                 ->maxLength(50),
-            Forms\Components\TextInput::make('meta.number_unique')
+            Forms\Components\TextInput::make('number_unique')
                 ->label('NPM/NIP/NIK')
                 ->minLength(10)
                 ->maxLength(50),
-            Forms\Components\TextInput::make('meta.agency')
+            Forms\Components\Select::make('institutes')
                 ->label('Instansi/Institusi')
-                ->minLength(10)
-                ->maxLength(100),
-            Forms\Components\TextInput::make('meta.telephone')
+                ->relationship('institutes', 'name')
+                ->createOptionForm([
+                    Forms\Components\Select::make('type')
+                        ->label('Jenis')
+                        ->options([
+                            'institusi' => 'INSTANSI',
+                            'instansi' => 'INSTITUSI',
+                        ])
+                        ->required(),
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nama')
+                        ->required(),
+                    Forms\Components\TextInput::make('address')
+                        ->label('Alamat')
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('city')
+                        ->label('Kota')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('phone_number')
+                        ->label('Nomor Telepon')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('email')
+                        ->label('Email')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('description')
+                        ->label('Deskripsi')
+                        ->maxLength(255),
+                ]),
+            Forms\Components\TextInput::make('phone_number')
                 ->label('Nomor HP')
                 ->numeric()
                 ->minLength(10)
