@@ -1,0 +1,25 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+body {
+    @apply !bg-[#F2F4F5] dark:!bg-gray-950;
+}
+
+/* .fi-sidebar {
+    @apply bg-black dark:bg-gray-950 !important;
+} */
+/* .fi-sidebar-nav {
+    @apply !bg-white -z-10 shadow-xl dark:!bg-gray-900
+} */
+.fi-sidebar-nav {
+    @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900
+}
+
+.fi-topbar {
+    @apply mt-6 ml-8 shadow-[0_4px_10px_rgba(0,0,0,0.25)];
+}
+
+div header.fi-sidebar-header {
+    @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900;
+ }

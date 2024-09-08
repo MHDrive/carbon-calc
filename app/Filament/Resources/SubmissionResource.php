@@ -20,7 +20,7 @@ class SubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $pluralModelLabel = 'verifikasi pengajuan';
+    // protected static ?string $pluralModelLabel = 'verifikasi pengajuan';
 
     public static function form(Form $form): Form
     {

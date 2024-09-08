@@ -20,7 +20,7 @@ class InstituteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $pluralModelLabel = 'Instansi/Institusi';
+    // protected static ?string $pluralModelLabel = 'Instansi/Institusi';
 
     public static function form(Form $form): Form
     {

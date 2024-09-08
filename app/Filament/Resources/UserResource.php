@@ -25,7 +25,9 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $pluralModelLabel = 'Pengguna';
+    protected static ?string $navigationGroup = 'Data Master';
+
+    // protected static ?string $pluralModelLabel = 'Pengguna';
 
     public static function form(Form $form): Form
     {
@@ -51,8 +53,11 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->rowIndex(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('full_name')
                     ->label('Full Name')
+                    ->getStateUsing(function ($record) {
+                        return $record->first_name . ' ' . $record->last_name;
+                    })
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
@@ -112,9 +117,9 @@ class UserResource extends Resource
                 ->collection('avatars')
                 ->alignCenter()
                 ->circle(fn(String $operation) => $operation === 'create' ? true : false),
-            Placeholder::make('name')
+            Placeholder::make('first_name')
                 ->hiddenLabel()
-                ->content(fn($state) => new HtmlString("<div style='text-align: center;'><strong style='font-size: 27px;'>" . $state . "</strong></div>"))
+                ->content(fn(User $record) => new HtmlString("<div style='text-align: center;'><strong style='font-size: 20px;'>" . $record->first_name . " " . $record->last_name . "</strong></div>"))
         ];
     }
     public static function getPasswordFormSchema(): array
