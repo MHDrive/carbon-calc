@@ -25,9 +25,16 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Data Master';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament-panels::resources/global-resource.navigation.group.master_data');
+    }
 
     // protected static ?string $pluralModelLabel = 'Pengguna';
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-panels::resources/global-resource.plural-model-label.user-model.users');
+    }
 
     public static function form(Form $form): Form
     {
@@ -119,7 +126,19 @@ class UserResource extends Resource
                 ->circle(fn(String $operation) => $operation === 'create' ? true : false),
             Placeholder::make('first_name')
                 ->hiddenLabel()
-                ->content(fn(User $record) => new HtmlString("<div style='text-align: center;'><strong style='font-size: 20px;'>" . $record->first_name . " " . $record->last_name . "</strong></div>"))
+                ->content(
+                    function ($record, $operation) {
+                        if ($operation === 'create') {
+                            return new HtmlString('');
+                        }
+                        return new HtmlString(
+                            "<div style='text-align: center;'><strong style='font-size: 20px;'>"
+                                . $record->first_name . " " . $record->last_name
+                                . "</strong></div>"
+                        );
+                    }
+                )
+
         ];
     }
     public static function getPasswordFormSchema(): array

@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SubmissionResource\Pages;
-use App\Filament\Resources\SubmissionResource\RelationManagers;
-use App\Models\Submission;
-use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\Submission;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SubmissionResource\Pages;
+use App\Services\Classes\SpatieMediaLibraryFileUpload;
+use App\Filament\Resources\SubmissionResource\RelationManagers;
 
 class SubmissionResource extends Resource
 {
@@ -20,7 +21,11 @@ class SubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $pluralModelLabel = 'verifikasi pengajuan';
+    // protected static ?string $pluralModelLabel = 'Pengguna';
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-panels::resources/global-resource.plural-model-label.submission-model.submissions');
+    }
 
     public static function form(Form $form): Form
     {
@@ -106,7 +111,12 @@ class SubmissionResource extends Resource
     {
         return [
             Forms\Components\Select::make('user_id')
-                ->relationship('user', 'name')
+                ->relationship(
+                    name: 'user',
+                    modifyQueryUsing: fn(Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
+                )
+                ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->first_name} {$record->last_name}")
+                // ->searchable(['first_name', 'last_name'])
                 ->required(),
         ];
     }
@@ -117,8 +127,8 @@ class SubmissionResource extends Resource
                 ->relationship('user')
                 ->schema([
                     Forms\Components\TextInput::make('name')
-                        ->label('Customer')
-                        // ->formatStateUsing(fn($state, $record) => dd($record))
+                        ->label('Nama')
+                        ->formatStateUsing(fn($state, $record) => ($record->getFilamentName()))
                         ->required(),
                     Forms\Components\TextInput::make('email')
                         ->label('Email address')
