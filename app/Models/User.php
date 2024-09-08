@@ -6,6 +6,7 @@ namespace App\Models;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Plank\Metable\Metable;
 
-class User extends Authenticatable implements HasMedia, HasAvatar
+class User extends Authenticatable implements HasMedia, HasAvatar, HasName
 {
     use HasFactory, Notifiable, InteractsWithMedia, Metable;
 
@@ -55,6 +56,11 @@ class User extends Authenticatable implements HasMedia, HasAvatar
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getFilamentName(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 
     public function getFilamentAvatarUrl(): ?string

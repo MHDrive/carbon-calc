@@ -20,7 +20,16 @@ class InstituteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $pluralModelLabel = 'Instansi/Institusi';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament-panels::resources/global-resource.navigation.group.master_data');
+    }
+
+    // protected static ?string $pluralModelLabel = 'Pengguna';
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-panels::resources/global-resource.plural-model-label.institute-model.institutes');
+    }
 
     public static function form(Form $form): Form
     {
