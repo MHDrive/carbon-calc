@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\StatusSubmissionEnum;
 use Filament\Forms;
+use Filament\Infolists\Components;
 use Filament\Tables;
 use Filament\Forms\Form;
 use App\Models\Submission;
@@ -16,12 +17,21 @@ use App\Filament\Resources\SubmissionResource\Pages;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\SubmissionResource\RelationManagers;
 use Filament\Forms\Components\ViewField;
+use Filament\Infolists\Infolist;
 
 class SubmissionResource extends Resource
 {
     protected static ?string $model = Submission::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (auth()->user()->isAdmin()) {
+            return true;
+        }
+        return false;
+    }
 
     public static function getPluralModelLabel(): string
     {
@@ -84,6 +94,7 @@ class SubmissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -105,6 +116,7 @@ class SubmissionResource extends Resource
             'index' => Pages\ListSubmissions::route('/'),
             'create' => Pages\CreateSubmission::route('/create'),
             'edit' => Pages\EditSubmission::route('/{record}/edit'),
+            'view' => Pages\ViewSubmission::route('/{record}'),
         ];
     }
 
@@ -115,14 +127,6 @@ class SubmissionResource extends Resource
                 ->label(fn(String $operation) => $operation === 'create' ? 'Upload File' : '')
                 ->hiddenLabel(fn(String $operation) => $operation === 'create' ? false : true)
                 ->collection('file_submissions'),
-        ];
-    }
-    public static function getTimmelineFormSchema(): array
-    {
-        return [
-            ViewField::make('timeline')
-                ->hiddenLabel()
-                ->view('filament.forms.components.timeline-submission')
         ];
     }
     public static function getMessageFormSchema(): array
@@ -174,5 +178,20 @@ class SubmissionResource extends Resource
             Forms\Components\TextInput::make('media.created_at')
                 ->label('Tanggal Upload')
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make()
+                    ->schema([]),
+                Components\Section::make('Content')
+                    ->schema([
+                        Components\SpatieMediaLibraryImageEntry::make('file_submission')
+                            ->collection('file_submissions')
+                    ])
+                    ->collapsible(),
+            ]);
     }
 }

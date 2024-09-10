@@ -12,10 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user->can('Pengguna:viewAny')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -23,11 +20,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        if ($user->can('Pengguna:view')) {
-            return true;
-        }
-        
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -35,10 +28,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        if ($user->can('Pengguna:create')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -50,14 +40,7 @@ class UserPolicy
         //     return true;
         // }
 
-        if ($user->can('Pengguna:update')) {
-            return true;
-        }
-
-        if ($user->can('Profile:update')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin() || $user->isGuest();
     }
 
     /**
@@ -65,10 +48,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        if ($user->can('Pengguna:delete')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**

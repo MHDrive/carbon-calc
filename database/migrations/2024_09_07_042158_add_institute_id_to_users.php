@@ -14,8 +14,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignIdFor(Institute::class)->after('id')->nullable();
-            $table->string('number_unique')->nullable()->after('username');
-            $table->integer('phone_number')->nullable()->after('email');;
         });
     }
 
@@ -26,8 +24,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('institute_id');
-            $table->dropColumn('number_unique');
-            $table->dropColumn('phone_number');
         });
     }
 };
