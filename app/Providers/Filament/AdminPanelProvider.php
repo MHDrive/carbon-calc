@@ -5,15 +5,23 @@ namespace App\Providers\Filament;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
+use Illuminate\View\View;
+use Filament\Tables\Table;
 use Filament\PanelProvider;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use App\Filament\Pages\ProfileUser;
+use Filament\View\PanelsRenderHook;
 use App\Filament\Pages\Auth\MyLogin;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Blade;
+use Filament\Forms\Components\Section;
 use App\Filament\Pages\Auth\MyRegister;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentView;
+use Filament\Tables\View\TablesRenderHook;
+use Filament\Support\Facades\FilamentColor;
 use App\Filament\Resources\SubmissionResource;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -32,9 +40,11 @@ class AdminPanelProvider extends PanelProvider
     public function boot(): void
     {
         FilamentIcon::register([
-            'panels::topbar.group.toggle-button' => 'heroicon-o-bars-3',
-            // 'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
+            'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
         ]);
+        Section::configureUsing(function (Section $section): void {
+            $section->extraAttributes([ 'class' => 'section-change-password' ]);
+        });
     }
     public function panel(Panel $panel): Panel
     {
@@ -43,19 +53,27 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->spa()
+            ->renderHook(
+                'panels::sidebar.nav',
+                function ($item) {
+                    if (! $item->isActive()) {
+                        return [
+                            'attributes' => [
+                                'class' => 'text-[#66799E]', 
+                            ],
+                        ];
+                    }
+                }
+            )
             ->unsavedChangesAlerts()
-            // ->spaUrlExceptions(fn (): array => [
-            //     url('/admin'),
-            //     SubmissionResource::getUrl(),
-            // ])
             ->login(MyLogin::class)
             ->registration(MyRegister::class)
             ->passwordReset(RequestPasswordReset::class)
             ->profile(ProfileUser::class, isSimple: false)
             ->brandLogo(fn() => view('filament.panels.logo'))
-            ->brandLogoHeight('1rem')
+            ->brandLogoHeight('3.5rem') // desain figma custom
             // ->sidebarFullyCollapsibleOnDesktop()
-            // ->sidebarCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::hex('#66D56A'),
             ])

@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Institute;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
+
+class InstitutePolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        if ($user->can('Instansi/Institusi:viewAny')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Institute $institute): bool
+    {
+        if ($user->can('Instansi/Institusi:view')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        if ($user->can('Instansi/Institusi:create')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Institute $institute): bool
+    {
+        if ($user->can('Instansi/Institusi:update')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Institute $institute): bool
+    {
+        if ($user->can('Instansi/Institusi:delete')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    // public function restore(User $user, Institute $institute): bool
+    // {
+    //     //
+    // }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    // public function forceDelete(User $user, Institute $institute): bool
+    // {
+    //     //
+    // }
+}

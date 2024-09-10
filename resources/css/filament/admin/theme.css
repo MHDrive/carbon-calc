@@ -6,12 +6,16 @@ body {
     @apply !bg-[#F2F4F5] dark:!bg-gray-950;
 }
 
+/* Tampilan desain default figma */
 /* .fi-sidebar {
     @apply bg-black dark:bg-gray-950 !important;
-} */
-/* .fi-sidebar-nav {
+}
+.fi-sidebar-nav {
     @apply !bg-white -z-10 shadow-xl dark:!bg-gray-900
 } */
+
+
+/* Tampilan Desain Custom */
 .fi-sidebar-nav {
     @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900
 }
@@ -23,3 +27,28 @@ body {
 div header.fi-sidebar-header {
     @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900;
  }
+
+ .fi-sidebar .fi-sidebar-item-button {
+    @apply !bg-transparent
+ }
+
+ .fi-sidebar-header {
+    @apply pt-6 h-24;
+ }
+ /* .fi-sidebar-nav-groups {
+    @apply pt-5
+ } */
+
+
+ /* kode mengatur posisi gambar di halam pendaftaran */
+ .fi-logo {
+    @apply items-center
+ }
+
+
+ /* tampilan header section form */
+.section-change-password .fi-section-header { @apply bg-[#5bc1468a] rounded-t-lg }
+
+.section-change-password .fi-section-header .fi-section-header-heading { @apply text-black }
+
+ /* class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 bg-gray-100 dark:bg-white/5" */
