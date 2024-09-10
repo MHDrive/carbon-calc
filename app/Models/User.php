@@ -3,22 +3,25 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
+use Plank\Metable\Metable;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Plank\Metable\Metable;
 
-class User extends Authenticatable implements HasMedia, HasAvatar, HasName
+class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar, HasName
 {
-    use HasFactory, Notifiable, InteractsWithMedia, Metable;
+    use HasFactory, Notifiable, InteractsWithMedia, Metable, HasRoles;
 
     protected $with = ['institutes', 'media'];
     /**
@@ -56,6 +59,12 @@ class User extends Authenticatable implements HasMedia, HasAvatar, HasName
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // dd($this->roles() == 'admin');
+        return  true;
     }
 
     public function getFilamentName(): string

@@ -6,5 +6,6 @@ export default {
         './app/Filament/**/*.php',
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
+        './resources/views/vendor/filament-panels/**/*.blade.php',
     ],
 }

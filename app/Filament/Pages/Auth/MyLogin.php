@@ -8,6 +8,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Filament\Forms\Components\Actions\Action;
 use Illuminate\Validation\ValidationException;
@@ -73,5 +74,15 @@ class MyLogin extends BaseLogin
         throw ValidationException::withMessages([
             'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
         ]);
+    }
+
+    public function hasLogo(): bool
+    {
+        return true;
+    }
+
+    public function getHeading(): string | Htmlable
+    {
+        return __('filament-panels::pages/auth/login.heading');
     }
 }

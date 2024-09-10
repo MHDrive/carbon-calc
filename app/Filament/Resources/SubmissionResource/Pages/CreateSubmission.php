@@ -8,10 +8,13 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\SubmissionResource;
+use App\Models\Submission;
 
 class CreateSubmission extends CreateRecord
 {
     protected static string $resource = SubmissionResource::class;
+
+    // protected static string $view = 'filament.resources.pages.submission-create';
 
     public function form(Form $form): Form
     {
@@ -24,7 +27,9 @@ class CreateSubmission extends CreateRecord
     {
         return [
             Section::make()
-                ->description('Silahkan isi untuk menambahkan pengajuan baru')
+                ->heading('Status Pengajuan')
+                ->schema(SubmissionResource::getTimmelineFormSchema()),
+            Section::make()
                 ->schema([
                     Group::make()
                         ->schema(SubmissionResource::getMediaFormSchema()),

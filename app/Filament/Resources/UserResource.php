@@ -8,6 +8,7 @@ use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Enums\UserRoleEnum;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,9 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\UserResource\RelationManagers;
+use League\CommonMark\Extension\Attributes\Node\Attributes;
+
+use function Termwind\style;
 
 class UserResource extends Resource
 {
@@ -40,23 +44,25 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
+                Forms\Components\Grid::make(3)
                     ->schema([
+                        Forms\Components\Split::make([
+                            Forms\Components\Section::make(static::getImageUserFormSchema()),
+                            Forms\Components\Section::make('Ganti Sandi Akun')
+                                ->schema(static::getPasswordFormSchema())->grow(false),
+                        ])->from('2xl'),
                         Forms\Components\Section::make()
-                            ->schema(static::getImageUserFormSchema()),
-                        Forms\Components\Section::make("Ganti Sandi")
-                            ->schema(static::getPasswordFormSchema()),
-                    ]),
-                Forms\Components\Section::make()
-                    ->schema(static::getDetailsUserFormSchema())
-                    ->columnSpan(2),
-            ])
-            ->columns(3);
+                            ->schema(static::getDetailsUserFormSchema())->columnSpan(2),
+                    ])
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->header(view('filament.tables.header', [
+                'heading' => 'Data Pengguna'
+            ]))
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->rowIndex(),
@@ -167,18 +173,22 @@ class UserResource extends Resource
     {
         return [
             Forms\Components\TextInput::make('first_name')
-                ->label('First Name')
+                ->label('Nama Pertama')
                 ->minLength(3)
                 ->maxLength(50)
                 ->autofocus(),
             Forms\Components\TextInput::make('last_name')
-                ->label('Last Name')
+                ->label('Nama Terakhir')
                 ->minLength(3)
                 ->maxLength(50),
             Forms\Components\TextInput::make('username')
                 ->label('Username')
                 ->minLength(3)
                 ->maxLength(50),
+            Forms\Components\Select::make('number_unique')
+                ->label('Peran Akun ')
+                ->native(false)
+                ->relationship(name: 'roles', titleAttribute: 'name'),
             Forms\Components\TextInput::make('number_unique')
                 ->label('NPM/NIP/NIK')
                 ->minLength(10)

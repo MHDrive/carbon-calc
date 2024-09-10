@@ -70,6 +70,9 @@ class InstituteResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->header(view('filament.tables.header', [
+                'heading' => 'Data Instansi / Institusi'
+            ]))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')

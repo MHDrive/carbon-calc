@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusSubmissionEnum;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SubmissionResource\Pages;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\SubmissionResource\RelationManagers;
+use Filament\Forms\Components\ViewField;
 
 class SubmissionResource extends Resource
 {
@@ -21,7 +23,6 @@ class SubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $pluralModelLabel = 'Pengguna';
     public static function getPluralModelLabel(): string
     {
         return __('filament-panels::resources/global-resource.plural-model-label.submission-model.submissions');
@@ -48,11 +49,27 @@ class SubmissionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->header(view('filament.tables.header', [
+                'heading' => 'Data Pengajuan'
+            ]))
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('Nama Lengkap')
+                    ->getStateUsing(fn($record) => $record->user->first_name . ' ' . $record->user->last_name)
+                    ->searchable(
+                        true,
+                        fn($query, $search) => $query
+                            ->orWhereHas(
+                                'user',
+                                fn($q) => $q
+                                    ->where('first_name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%")
+                            )
+                    )
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state) => StatusSubmissionEnum::colorOptions()[$state] ?? 'defaultColor'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -98,6 +115,14 @@ class SubmissionResource extends Resource
                 ->label(fn(String $operation) => $operation === 'create' ? 'Upload File' : '')
                 ->hiddenLabel(fn(String $operation) => $operation === 'create' ? false : true)
                 ->collection('file_submissions'),
+        ];
+    }
+    public static function getTimmelineFormSchema(): array
+    {
+        return [
+            ViewField::make('timeline')
+                ->hiddenLabel()
+                ->view('filament.forms.components.timeline-submission')
         ];
     }
     public static function getMessageFormSchema(): array

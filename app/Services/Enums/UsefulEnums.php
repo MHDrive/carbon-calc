@@ -21,6 +21,20 @@ trait UsefulEnums
             return $carry;
         }, []);
     }
+    public static function iconOptions(): array
+    {
+        return array_reduce(self::cases(), function ($carry, $enum) {
+            $carry[$enum->value] = $enum->getIcon();
+            return $carry;
+        }, []);
+    }
+    public static function colorOptions(): array
+    {
+        return array_reduce(self::cases(), function ($carry, $enum) {
+            $carry[$enum->value] = $enum->getColor();
+            return $carry;
+        }, []);
+    }
 
     public static function random(): static
     {

@@ -65,7 +65,6 @@ class MyRegister extends BaseRegister
     // Menangani Proses Register
     protected function handleRegistration(array $data): Model
     {
-        $data['name'] = $data['first_name'] . ' ' . $data['last_name'] ?: '';
         return $this->getUserModel()::create($data);
     }
 }

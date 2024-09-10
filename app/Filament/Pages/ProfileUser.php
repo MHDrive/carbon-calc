@@ -77,7 +77,35 @@ class ProfileUser extends BaseProfile
                                     ->maxLength(50),
                                 Forms\Components\Select::make('institutes')
                                     ->label('Instansi/Institusi')
-                                    ->relationship('institutes', 'name'),
+                                    ->relationship('institutes', 'name')
+                                    ->createOptionForm([
+                                        Forms\Components\Select::make('type')
+                                            ->label('Jenis')
+                                            ->options([
+                                                'institusi' => 'INSTANSI',
+                                                'instansi' => 'INSTITUSI',
+                                            ])
+                                            ->required(),
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('Nama')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('address')
+                                            ->label('Alamat')
+                                            ->required()
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('city')
+                                            ->label('Kota')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('phone_number')
+                                            ->label('Nomor Telepon')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('email')
+                                            ->label('Email')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('description')
+                                            ->label('Deskripsi')
+                                            ->maxLength(255),
+                                    ]),
                                 Forms\Components\TextInput::make('phone_number')
                                     ->label('Nomor HP')
                                     ->numeric()
