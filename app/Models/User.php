@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRoleEnum;
 use Filament\Panel;
 use Plank\Metable\Metable;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Filament\Models\Contracts\HasName;
-use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
@@ -21,9 +22,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar, HasName
 {
-    use HasFactory, Notifiable, InteractsWithMedia, Metable, HasRoles;
-
-    protected $with = ['institutes', 'media'];
+    use HasFactory, Notifiable, InteractsWithMedia, Metable;
     /**
      * The attributes that are mass assignable.
      *
@@ -33,6 +32,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
         'first_name',
         'last_name',
         'username',
+        'roles',
+        'institute_id',
         'name',
         'email',
         'password',
@@ -63,8 +64,16 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // dd($this->roles() == 'admin');
-        return  true;
+        return  $this->isAdmin() || $this->isGuest();
+    }
+
+    public function isAdmin()
+    {
+        return $this->roles === UserRoleEnum::ADMIN->value;
+    }
+    public function isGuest()
+    {
+        return $this->roles === UserRoleEnum::GUEST->value;
     }
 
     public function getFilamentName(): string

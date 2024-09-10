@@ -185,10 +185,8 @@ class UserResource extends Resource
                 ->label('Username')
                 ->minLength(3)
                 ->maxLength(50),
-            Forms\Components\Select::make('number_unique')
-                ->label('Peran Akun ')
-                ->native(false)
-                ->relationship(name: 'roles', titleAttribute: 'name'),
+            Forms\Components\ToggleButtons::make('roles')
+                ->label('Role '),
             Forms\Components\TextInput::make('number_unique')
                 ->label('NPM/NIP/NIK')
                 ->minLength(10)

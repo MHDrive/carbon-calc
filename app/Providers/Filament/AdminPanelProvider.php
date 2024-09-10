@@ -17,6 +17,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Components\Section;
 use App\Filament\Pages\Auth\MyRegister;
+use Filament\Navigation\NavigationItem;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -43,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
         ]);
         Section::configureUsing(function (Section $section): void {
-            $section->extraAttributes([ 'class' => 'section-change-password' ]);
+            $section->extraAttributes(['class' => 'section-change-password']);
         });
     }
     public function panel(Panel $panel): Panel
@@ -59,12 +60,13 @@ class AdminPanelProvider extends PanelProvider
                     if (! $item->isActive()) {
                         return [
                             'attributes' => [
-                                'class' => 'text-[#66799E]', 
+                                'class' => 'text-[#66799E]',
                             ],
                         ];
                     }
                 }
             )
+            ->navigationItems(static::getNavigationItems())
             ->unsavedChangesAlerts()
             ->login(MyLogin::class)
             ->registration(MyRegister::class)
@@ -102,5 +104,22 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make('Profil')
+                ->url(fn() => route('filament.admin.auth.profile'))
+                ->icon('heroicon-o-user')
+                ->isActiveWhen(fn() => request()->routeIs('filament.admin.auth.profile'))
+                ->hidden(fn() => (auth()->user()->isAdmin())),
+            NavigationItem::make('Pengajuan Berkas')
+                ->url(fn() => route('filament.admin.resources.submissions.create'))
+                ->icon('heroicon-o-user')
+                ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.submissions.create'))
+                ->hidden(fn() => (auth()->user()->isAdmin()))
+                ->sort(3),
+        ];
     }
 }

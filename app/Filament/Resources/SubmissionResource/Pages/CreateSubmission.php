@@ -27,9 +27,6 @@ class CreateSubmission extends CreateRecord
     {
         return [
             Section::make()
-                ->heading('Status Pengajuan')
-                ->schema(SubmissionResource::getTimmelineFormSchema()),
-            Section::make()
                 ->schema([
                     Group::make()
                         ->schema(SubmissionResource::getMediaFormSchema()),

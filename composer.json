@@ -11,8 +11,7 @@
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
-        "plank/laravel-metable": "^6.0",
-        "spatie/laravel-permission": "^6.9"
+        "plank/laravel-metable": "^6.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

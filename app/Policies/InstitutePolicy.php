@@ -13,10 +13,7 @@ class InstitutePolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user->can('Instansi/Institusi:viewAny')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -24,10 +21,7 @@ class InstitutePolicy
      */
     public function view(User $user, Institute $institute): bool
     {
-        if ($user->can('Instansi/Institusi:view')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -35,10 +29,7 @@ class InstitutePolicy
      */
     public function create(User $user): bool
     {
-        if ($user->can('Instansi/Institusi:create')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin() || $user->isGuest();;
     }
 
     /**
@@ -46,10 +37,7 @@ class InstitutePolicy
      */
     public function update(User $user, Institute $institute): bool
     {
-        if ($user->can('Instansi/Institusi:update')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
@@ -57,10 +45,7 @@ class InstitutePolicy
      */
     public function delete(User $user, Institute $institute): bool
     {
-        if ($user->can('Instansi/Institusi:delete')) {
-            return true;
-        }
-        return false;
+        return $user->isAdmin();
     }
 
     /**
