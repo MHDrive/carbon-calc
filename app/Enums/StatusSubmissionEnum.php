@@ -13,6 +13,8 @@ enum StatusSubmissionEnum: string implements HasLabel, HasColor
     case PENDING = 'pending';
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
+    case ACTIVE = '1';
+    case EXPIRED = '0';
 
     public function getLabel(): string
     {
@@ -20,6 +22,8 @@ enum StatusSubmissionEnum: string implements HasLabel, HasColor
             self::PENDING => 'Menunggu Verifikasi',
             self::APPROVED => 'Diterima',
             self::REJECTED => 'Ditolak',
+            self::ACTIVE => 'Active',
+            self::EXPIRED => 'Expired',
         };
     }
     public function getColor(): string | array | null
@@ -28,6 +32,8 @@ enum StatusSubmissionEnum: string implements HasLabel, HasColor
             self::PENDING => 'info',
             self::APPROVED => 'success',
             self::REJECTED => 'danger',
+            self::ACTIVE => 'success',
+            self::EXPIRED => 'danger',
         };
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
-use App\Filament\Resources\SubmissionResource;
 use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Alignment;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\SubmissionResource;
 
 class EditSubmission extends EditRecord
 {
@@ -17,13 +19,8 @@ class EditSubmission extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array
+    protected function getRedirectUrl(): string
     {
-        // $user = $this->getRecord()->user; 
-        // $media = $user->getFirstMedia('avatars'); 
-        // dd($media);
-        $data['meta'] = $this->getRecord()->user->getAllMeta()->toArray();
-        // $data['media'] = $this->getRecord();
-        return $data;
+        return $this->getResource()::getUrl('index');
     }
 }

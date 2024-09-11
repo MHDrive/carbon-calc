@@ -45,7 +45,9 @@ div header.fi-sidebar-header {
     @apply items-center
  }
 
-
+.color-primary {
+    @apply bg-[#5bc1468a]
+}
  /* tampilan header section form */
 .section-change-password .fi-section-header { @apply bg-[#5bc1468a] rounded-t-lg }
 
