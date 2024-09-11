@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\StatusSubmissionEnum;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
@@ -115,9 +116,17 @@ class AdminPanelProvider extends PanelProvider
                 ->isActiveWhen(fn() => request()->routeIs('filament.admin.auth.profile'))
                 ->hidden(fn() => (auth()->user()->isAdmin())),
             NavigationItem::make('Pengajuan Berkas')
-                ->url(fn() => route('filament.admin.resources.submissions.create'))
+                ->url(function () {
+                    $user = auth()->user();
+                    $submission  = $user->submissions();
+                    $data = $submission->routeGuest()->first();
+                    if ($data) {
+                        return route('filament.admin.resources.submissions.view', ['record' => $data->id]);
+                    }
+                    return route('filament.admin.resources.submissions.create');
+                })
                 ->icon('heroicon-o-user')
-                ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.submissions.create'))
+                ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.submissions.create') || request()->routeIs('filament.admin.resources.submissions.view'))
                 ->hidden(fn() => (auth()->user()->isAdmin()))
                 ->sort(3),
         ];

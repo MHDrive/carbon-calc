@@ -21,7 +21,7 @@ class SubmissionPolicy
      */
     public function view(User $user, Submission $submission): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isGuest();
     }
 
     /**
@@ -29,7 +29,8 @@ class SubmissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isGuest();
+        return $user->isGuest();
+        // return $user->isAdmin() || $user->isGuest();
     }
 
     /**
