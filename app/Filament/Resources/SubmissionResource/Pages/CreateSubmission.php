@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\Submission;
@@ -9,13 +10,18 @@ use App\Enums\UserRoleEnum;
 use Filament\Forms\Components\View;
 use App\Livewire\TimelineSubmission;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Livewire;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\ViewField;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\SubmissionResource;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 
 class CreateSubmission extends CreateRecord
@@ -52,8 +58,13 @@ class CreateSubmission extends CreateRecord
 
                     Group::make()
                         ->schema([
-                            Group::make(),
-                            Group::make()->schema(SubmissionResource::getMediaFormSchema()),
+                            Group::make([
+                                Hidden::make('user_id')
+                                    ->default(Auth::id())
+                            ]),
+                            SpatieMediaLibraryFileUpload::make('file_submission')
+                                ->hiddenLabel()
+                                ->collection('file_submissions'),
                             Group::make()
                         ])
                         ->columns(3)
@@ -63,17 +74,33 @@ class CreateSubmission extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['user_id'] = auth()->user()->id;
-        $record = new ($this->getModel())($data);
-
-        $record->save();
-
+        $record = Submission::create($data);
         $this->newData = $record;
+        $user = Auth::user();
+        $this->notificationDatabase($user);
         return $record;
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('view', ['record' => $this->newData->id]);
+        return $this->getResource()::getUrl('view-guest', ['record' => $this->newData->id]);
+    }
+
+    public function notificationDatabase($user)
+    {
+        $admin = User::where('roles', UserRoleEnum::ADMIN)->first();
+        Notification::make()
+            ->title('Pengajuan Berkas')
+            ->body('Pengguna ' . $user->first_name . ' ' . $user->last_name . ' telah mengajukan berkas baru. Silakan klik lihat untuk melihat detail dan melakukan verifikasi.')
+            ->actions([
+                Action::make('view')
+                    ->label('lihat')
+                    ->url(route('filament.admin.resources.submissions.view', ['record' => $this->newData->id]))
+                    ->button()
+                    ->markAsRead(),
+            ])
+            ->sendToDatabase($admin);
+
+        event(new DatabaseNotificationsSent($admin));
     }
 }

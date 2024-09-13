@@ -106,7 +106,7 @@ class DatabaseSeeder extends Seeder
 
         $admin = User::factory()->create([
             'email' => 'admin@gmail.com',
-            'roles' => UserRoleEnum::ADMIN->value
+            'roles' => UserRoleEnum::ADMIN
         ]);
         
         // $admin->syncRoles(UserRoleEnum::ADMIN);
@@ -114,7 +114,7 @@ class DatabaseSeeder extends Seeder
 
         $guest = User::factory()->create([
             'email' => 'guest@gmail.com',
-            'roles' => UserRoleEnum::GUEST->value
+            'roles' => UserRoleEnum::GUEST
         ]);
 
         // $guest->syncRoles(UserRoleEnum::GUEST);

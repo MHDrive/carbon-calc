@@ -13,7 +13,7 @@ class ListSubmissions extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        if(auth()->user()->roles === UserRoleEnum::ADMIN->value){
+        if(auth()->user()->roles === UserRoleEnum::ADMIN){
             return [];
         }
         return [

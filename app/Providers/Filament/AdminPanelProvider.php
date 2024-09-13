@@ -2,15 +2,16 @@
 
 namespace App\Providers\Filament;
 
-use App\Enums\StatusSubmissionEnum;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use Filament\PanelProvider;
+use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Enums\StatusSubmissionEnum;
 use App\Filament\Pages\ProfileUser;
 use Filament\View\PanelsRenderHook;
 use App\Filament\Pages\Auth\MyLogin;
@@ -55,6 +56,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->spa()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling(null)
             ->renderHook(
                 'panels::sidebar.nav',
                 function ($item) {
@@ -84,7 +87,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -121,7 +124,7 @@ class AdminPanelProvider extends PanelProvider
                     $submission  = $user->submissions();
                     $data = $submission->routeGuest()->first();
                     if ($data) {
-                        return route('filament.admin.resources.submissions.view', ['record' => $data->id]);
+                        return route('filament.admin.resources.submissions.view-guest', ['record' => $data->id]);
                     }
                     return route('filament.admin.resources.submissions.create');
                 })

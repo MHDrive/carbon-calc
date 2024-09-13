@@ -60,6 +60,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'roles' => UserRoleEnum::class
         ];
     }
 
@@ -70,11 +71,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
 
     public function isAdmin()
     {
-        return $this->roles === UserRoleEnum::ADMIN->value;
+        return $this->roles === UserRoleEnum::ADMIN;
     }
     public function isGuest()
     {
-        return $this->roles === UserRoleEnum::GUEST->value;
+        return $this->roles === UserRoleEnum::GUEST;
     }
 
     public function getFilamentName(): string

@@ -46,19 +46,8 @@ class SubmissionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->schema(static::getMediaFormSchema())->disabled(),
-                        Forms\Components\Section::make()
-                            ->schema(static::getMessageFormSchema()),
-                    ])
-                    ->columnSpan(1),
-                Forms\Components\Section::make()
-                    ->schema(static::getDetailFormSchema())
-                    ->disabled()
-                    ->columnSpan(2),
-            ])->columns(3);
+                //
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -107,7 +96,7 @@ class SubmissionResource extends Resource
             ->recordUrl(false)
             ->actions([
                 // Tables\Actions\ActionGroup::make([
-                Tables\Actions\ViewAction::make()->label('Verifikasi')->color('info')->hidden(fn ($record) =>  $record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED)
+                Tables\Actions\ViewAction::make()->label('Verifikasi')->color('info')->hidden(fn($record) =>  $record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED)
                 // Tables\Actions\EditAction::make(),
                 // Tables\Actions\Action::make('approved')
                 //     ->label('Terima')
@@ -146,25 +135,8 @@ class SubmissionResource extends Resource
         return [
             'index' => Pages\ListSubmissions::route('/'),
             'create' => Pages\CreateSubmission::route('/create'),
-            'edit' => Pages\EditSubmission::route('/{record}/edit'),
             'view' => Pages\ViewSubmission::route('/{record}'),
-        ];
-    }
-
-    public static function getMediaFormSchema(): array
-    {
-        return [
-            SpatieMediaLibraryFileUpload::make('file_submission')
-                ->hiddenLabel()
-                ->deletable(false)
-                ->collection('file_submissions')
-                ->hintAction(
-                    MediaAction::make('View')
-                        ->button()
-                        // ->iconButton()
-                        ->icon('heroicon-o-eye')
-                        ->media(fn($operation) => $operation === 'create' ?: ($this->getRecord()->getFirstMedia('file_submissions')->getUrl()))
-                )
+            'view-guest' => Pages\ViewSubmissionGuest::route('/{record}/view'),
         ];
     }
     public static function getMessageFormSchema(): array

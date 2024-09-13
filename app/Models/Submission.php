@@ -16,7 +16,7 @@ class Submission extends Model implements HasMedia
 
     protected $fillable = ['user_id', 'notes', 'status', 'is_active'];
 
-    protected $with = ['user', 'media'];
+    // protected $with = ['user', 'media'];
 
     protected $casts = [
         'status' => StatusSubmissionEnum::class,
