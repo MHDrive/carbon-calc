@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
 use Filament\Forms;
+use App\Models\User;
 use App\Enums\StatusSubmissionEnum;
+use App\Enums\UserRoleEnum;
+use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Actions\Action;
@@ -15,6 +18,16 @@ use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 class ViewSubmission extends ViewRecord
 {
     protected static string $resource = SubmissionResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        $user = Auth::user(); // Dapatkan user yang sedang login
+
+        if (!$user || $user->roles === UserRoleEnum::GUEST) {
+            abort(404); // Tampilkan 404 jika bukan admin
+        }
+    }
+
 
     protected function getForms(): array
     {
@@ -54,7 +67,6 @@ class ViewSubmission extends ViewRecord
                                             ->requiresConfirmation()
                                             ->action(function ($state, $record) {
                                                 $state['status'] = StatusSubmissionEnum::APPROVED->value;
-
                                                 $record->update([
                                                     'notes' => $state['notes'],
                                                     'status' => $state['status'],
@@ -64,7 +76,11 @@ class ViewSubmission extends ViewRecord
                                                         ->title('Saved successfully')
                                                         ->success()
                                                         ->send();
-                                                    $this->notificationDatabase($record);
+                                                    $message = [
+                                                        'title' => 'Selamat! Pengajuan Anda Diterima',
+                                                        'body' => 'Pengajuan berkas Anda telah diterima oleh admin. Anda sudah bisa mengakses fitur kalkulator.'
+                                                    ];
+                                                    $this->notificationDatabase($record, $message);
                                                 }
                                                 return redirect()->route('filament.admin.resources.submissions.index');
                                             }),
@@ -78,18 +94,22 @@ class ViewSubmission extends ViewRecord
                                                 $record->update([
                                                     'notes' => $state['notes'],
                                                     'status' => $state['status'],
-                                                    'is_active' => $state['is_active'],
                                                 ]);
                                                 if ($record) {
                                                     Notification::make()
                                                         ->title('Saved successfully')
                                                         ->success()
                                                         ->send();
-                                                    $this->notificationDatabase($record);
+                                                    $message = [
+                                                        'title' => 'Maaf, Pengajuan Anda Ditolak',
+                                                        'body' => 'Pengajuan berkas Anda ditolak oleh admin. Silakan klik lihat untuk melihat catatan penolakan dan ajukan ulang.'
+                                                    ];
+                                                    $this->notificationDatabase($record, $message);
                                                 }
                                                 return redirect()->route('filament.admin.resources.submissions.index');
                                             }),
                                     ])->alignCenter()
+                                        ->hidden(fn() => $this->getRecord()->status === StatusSubmissionEnum::APPROVED || $this->getRecord()->status === StatusSubmissionEnum::REJECTED)
                                 ])
                             ])
                             ->columnSpan(2),
@@ -103,12 +123,12 @@ class ViewSubmission extends ViewRecord
         ];
     }
 
-    public function notificationDatabase($record)
+    public function notificationDatabase($record, array $message)
     {
         $sendTo = $record->with('user')->first();
         Notification::make()
-            ->title('Selamat! Pengajuan Anda Diterima')
-            ->body('Pengajuan berkas Anda telah diterima oleh admin. Anda sudah bisa mengakses fitur kalkulator.')
+            ->title($message['title'])
+            ->body($message['body'])
             ->sendToDatabase($sendTo->user);
 
         event(new DatabaseNotificationsSent($sendTo->user));

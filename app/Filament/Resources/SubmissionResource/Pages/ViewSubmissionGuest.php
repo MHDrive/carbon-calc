@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\SubmissionResource\Pages;
 
 use Filament\Forms;
+use App\Enums\UserRoleEnum;
 use App\Livewire\TimelineSubmission;
+use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\SubmissionResource;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
@@ -12,6 +14,15 @@ use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 class ViewSubmissionGuest extends ViewRecord
 {
     protected static string $resource = SubmissionResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        $user = Auth::user(); // Dapatkan user yang sedang login
+
+        if (!$user || $user->roles === UserRoleEnum::ADMIN) {
+            abort(404); // Tampilkan 404 jika bukan admin
+        }
+    }
 
     protected function getForms(): array
     {

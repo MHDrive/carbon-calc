@@ -105,7 +105,7 @@ class DatabaseSeeder extends Seeder
         // }
 
         $admin = User::factory()->create([
-            'email' => 'admin@gmail.com',
+            'email' => 'myakunreal360@gmail.com',
             'roles' => UserRoleEnum::ADMIN
         ]);
         

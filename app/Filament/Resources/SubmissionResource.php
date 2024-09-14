@@ -95,26 +95,7 @@ class SubmissionResource extends Resource
             ])
             ->recordUrl(false)
             ->actions([
-                // Tables\Actions\ActionGroup::make([
                 Tables\Actions\ViewAction::make()->label('Verifikasi')->color('info')->hidden(fn($record) =>  $record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED)
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\Action::make('approved')
-                //     ->label('Terima')
-                //     ->color('success')
-                //     ->icon('heroicon-s-check-circle')
-                //     ->action(function ($record) {
-                //         $update = $record->update(['status' => StatusSubmissionEnum::APPROVED->value]);
-                //         return $update;
-                //     }),
-                // Tables\Actions\Action::make('rejected')
-                //     ->label('Tolak')
-                //     ->color('danger')
-                //     ->icon('heroicon-s-x-circle')
-                //     ->action(function ($record) {
-                //         $update = $record->update(['status' => StatusSubmissionEnum::REJECTED->value]);
-                //         return $update;
-                //     }),
-                // ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

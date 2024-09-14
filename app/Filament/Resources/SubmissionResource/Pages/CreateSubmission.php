@@ -7,10 +7,12 @@ use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\Submission;
 use App\Enums\UserRoleEnum;
+use App\Mail\CreateSubmissionMail;
 use Filament\Forms\Components\View;
 use App\Livewire\TimelineSubmission;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Livewire;
@@ -30,7 +32,14 @@ class CreateSubmission extends CreateRecord
 
     public $newData;
 
-    // protected static string $view = 'filament.resources.pages.submission-create';
+    protected function authorizeAccess(): void
+    {
+        $user = Auth::user(); // Dapatkan user yang sedang login
+
+        if (!$user || $user->roles === UserRoleEnum::ADMIN) {
+            abort(404); // Tampilkan 404 jika bukan admin
+        }
+    }
 
     public function form(Form $form): Form
     {
@@ -77,7 +86,9 @@ class CreateSubmission extends CreateRecord
         $record = Submission::create($data);
         $this->newData = $record;
         $user = Auth::user();
-        $this->notificationDatabase($user);
+        $admin = User::where('roles', UserRoleEnum::ADMIN)->first();
+        $this->notificationDatabase($user, $admin);
+        // $this->sendToMail($admin, $record);
         return $record;
     }
 
@@ -86,9 +97,8 @@ class CreateSubmission extends CreateRecord
         return $this->getResource()::getUrl('view-guest', ['record' => $this->newData->id]);
     }
 
-    public function notificationDatabase($user)
+    public function notificationDatabase($user, $admin)
     {
-        $admin = User::where('roles', UserRoleEnum::ADMIN)->first();
         Notification::make()
             ->title('Pengajuan Berkas')
             ->body('Pengguna ' . $user->first_name . ' ' . $user->last_name . ' telah mengajukan berkas baru. Silakan klik lihat untuk melihat detail dan melakukan verifikasi.')
@@ -102,5 +112,18 @@ class CreateSubmission extends CreateRecord
             ->sendToDatabase($admin);
 
         event(new DatabaseNotificationsSent($admin));
+    }
+
+    public function sendToMail($admin, $submission)
+    {
+        $details = [
+            'subject' => 'Your Submission is Received',
+            'body' => 'Thank you for your submission. We will review it and get back to you shortly.'
+        ];
+
+        // Kirim email
+        $response = Mail::to($admin->email)
+            ->send(new CreateSubmissionMail($details, $submission));
+        dd($response);
     }
 }
