@@ -35,61 +35,30 @@ class CreateSubmission extends CreateRecord
     protected function authorizeAccess(): void
     {
         $user = Auth::user(); // Dapatkan user yang sedang login
-
+        $submission  = $user->submissions();
+        $data = $submission->routeGuest()->first();
+        if ($data) {
+            abort(404); // Tampilkan 404 jika bukan admin
+        }
         if (!$user || $user->roles === UserRoleEnum::ADMIN) {
             abort(404); // Tampilkan 404 jika bukan admin
         }
     }
 
-    public function form(Form $form): Form
-    {
-        return parent::form($form)
-            ->schema($this->getSteps())
-            ->columns(null);
-    }
-
-    public function getSteps(): array
-    {
-        return [
-            Section::make()
-                ->heading('Status Pengajuan')
-                ->schema([
-                    View::make('livewire.timeline-submission')
-                ]),
-            Section::make()
-                ->schema([
-                    Section::make()
-                        ->extraAttributes(['class' => 'color-primary'])
-                        ->schema([
-                            ViewField::make('description')
-                                ->view('filament.forms.components.description-submission'),
-                        ]),
-
-                    Group::make()
-                        ->schema([
-                            Group::make([
-                                Hidden::make('user_id')
-                                    ->default(Auth::id())
-                            ]),
-                            SpatieMediaLibraryFileUpload::make('file_submission')
-                                ->hiddenLabel()
-                                ->collection('file_submissions'),
-                            Group::make()
-                        ])
-                        ->columns(3)
-                ]),
-        ];
-    }
-
     protected function handleRecordCreation(array $data): Model
     {
-        $record = Submission::create($data);
+        $record = static::getModel()::create($data);
         $this->newData = $record;
+        return $record;
+    }
+
+    protected function afterCreate(): void
+    {
+        $record = $this->newData->with('media')->first();
         $user = Auth::user();
         $admin = User::where('roles', UserRoleEnum::ADMIN)->first();
         $this->notificationDatabase($user, $admin);
-        // $this->sendToMail($admin, $record);
-        return $record;
+        $this->sendToMail($user, $admin, $record);
     }
 
     protected function getRedirectUrl(): string
@@ -114,16 +83,18 @@ class CreateSubmission extends CreateRecord
         event(new DatabaseNotificationsSent($admin));
     }
 
-    public function sendToMail($admin, $submission)
+    public function sendToMail($user, $admin, $submission)
     {
-        $details = [
-            'subject' => 'Your Submission is Received',
-            'body' => 'Thank you for your submission. We will review it and get back to you shortly.'
+        $messages = [
+            'subject' => 'Pengajuan_Berkas_' . $user->first_name . '_' . $user->last_name,
+            'body' => 'Kami telah menerima kiriman baru dari pengguna ' . $user->first_name . ' ' . $user->last_name . '.',
+            'body2' => 'Jika Anda ingin melihat detailnya, klik tombol di bawah ini untuk masuk ke sistem:',
+            'url' => '/admin/submissions/'. $submission->id,
+            'title' => 'Pengajuan Baru',
         ];
 
         // Kirim email
-        $response = Mail::to($admin->email)
-            ->send(new CreateSubmissionMail($details, $submission));
-        dd($response);
+        Mail::to($admin->email)
+            ->send(new CreateSubmissionMail($messages, $submission));
     }
 }

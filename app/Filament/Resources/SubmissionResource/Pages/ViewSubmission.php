@@ -4,9 +4,11 @@ namespace App\Filament\Resources\SubmissionResource\Pages;
 
 use Filament\Forms;
 use App\Models\User;
-use App\Enums\StatusSubmissionEnum;
 use App\Enums\UserRoleEnum;
+use App\Mail\CreateSubmissionMail;
+use App\Enums\StatusSubmissionEnum;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Actions\Action;
@@ -18,7 +20,6 @@ use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 class ViewSubmission extends ViewRecord
 {
     protected static string $resource = SubmissionResource::class;
-
     protected function authorizeAccess(): void
     {
         $user = Auth::user(); // Dapatkan user yang sedang login
@@ -78,9 +79,11 @@ class ViewSubmission extends ViewRecord
                                                         ->send();
                                                     $message = [
                                                         'title' => 'Selamat! Pengajuan Anda Diterima',
-                                                        'body' => 'Pengajuan berkas Anda telah diterima oleh admin. Anda sudah bisa mengakses fitur kalkulator.'
+                                                        'body' => 'Pengajuan berkas Anda telah diterima oleh admin. Anda sudah bisa mengakses fitur kalkulator.',
+                                                        'url' => '/admin/calculation/',
                                                     ];
                                                     $this->notificationDatabase($record, $message);
+                                                    $this->sendToMail($record, $message);
                                                 }
                                                 return redirect()->route('filament.admin.resources.submissions.index');
                                             }),
@@ -102,9 +105,11 @@ class ViewSubmission extends ViewRecord
                                                         ->send();
                                                     $message = [
                                                         'title' => 'Maaf, Pengajuan Anda Ditolak',
-                                                        'body' => 'Pengajuan berkas Anda ditolak oleh admin. Silakan klik lihat untuk melihat catatan penolakan dan ajukan ulang.'
+                                                        'body' => 'Pengajuan berkas Anda ditolak oleh admin. Silakan klik lihat untuk melihat catatan penolakan dan ajukan ulang.',
+                                                        'url' => '/admin/submissions/' . $record->id . '/view-reject',
                                                     ];
                                                     $this->notificationDatabase($record, $message);
+                                                    $this->sendToMail($record, $message);
                                                 }
                                                 return redirect()->route('filament.admin.resources.submissions.index');
                                             }),
@@ -132,6 +137,16 @@ class ViewSubmission extends ViewRecord
             ->sendToDatabase($sendTo->user);
 
         event(new DatabaseNotificationsSent($sendTo->user));
+    }
+
+    public function sendToMail($submission, $messages)
+    {
+        $users = $submission->with('user')->first();
+        $messages['subject'] = 'Hasil_Pengajuan_Anda';
+        $messages['regards'] = 'Hello ' . $users->user->first_name . ' ' . $users->user->last_name;
+        // Kirim email
+        Mail::to($users->user->email)
+            ->send(new CreateSubmissionMail($messages, $submission, true));
     }
     protected function getRedirectUrl(): string
     {

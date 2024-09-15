@@ -11,15 +11,16 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Infolists\Components;
 use App\Enums\StatusSubmissionEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\ViewField;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SubmissionResource\Pages;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\SubmissionResource\RelationManagers;
-use Filament\Notifications\Notification;
 use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 use Joaopaulolndev\FilamentPdfViewer\Infolists\Components\PdfViewerEntry;
 
@@ -46,7 +47,33 @@ class SubmissionResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make()
+                    ->heading('Status Pengajuan')
+                    ->schema([
+                        Forms\Components\View::make('livewire.timeline-submission')
+                    ]),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->extraAttributes(['class' => 'color-primary'])
+                            ->schema([
+                                ViewField::make('description')
+                                    ->view('filament.forms.components.description-submission'),
+                            ]),
+
+                        Forms\Components\Group::make()
+                            ->schema([
+                                Forms\Components\Group::make([
+                                    Forms\Components\Hidden::make('user_id')
+                                        ->default(Auth::id())
+                                ]),
+                                SpatieMediaLibraryFileUpload::make('file_submission')
+                                    // ->hiddenLabel()
+                                    ->collection('file_submissions'),
+                                Forms\Components\Group::make()
+                            ])
+                            ->columns(3)
+                    ]),
             ]);
     }
 
