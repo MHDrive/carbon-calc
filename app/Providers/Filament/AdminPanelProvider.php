@@ -12,6 +12,7 @@ use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use App\Enums\StatusSubmissionEnum;
+use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\InfoClimateDries;
 use App\Filament\Pages\ProfileUser;
 use Filament\View\PanelsRenderHook;
 use App\Filament\Pages\Auth\MyLogin;
@@ -86,6 +87,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->pages([
                 Dashboard::class,
             ])

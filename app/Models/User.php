@@ -4,10 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Enums\UserRoleEnum;
 use Filament\Panel;
 use Plank\Metable\Metable;
+use App\Enums\UserRoleEnum;
 use Spatie\Image\Enums\Fit;
+use App\Models\Recapitulation;
 use Spatie\MediaLibrary\HasMedia;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasAvatar;
@@ -115,5 +116,9 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
     public function institutes(): BelongsTo
     {
         return $this->belongsTo(Institute::class, 'institute_id', 'id');
+    }
+    public function recapitulation(): HasMany
+    {
+        return $this->hasMany(Recapitulation::class);
     }
 }

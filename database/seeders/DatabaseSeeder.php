@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ClimateTypeEnum;
 use App\Models\Role;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use App\Models\Permission;
 use App\Enums\UserRoleEnum;
+use App\Models\Calculation;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -108,9 +110,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'myakunreal360@gmail.com',
             'roles' => UserRoleEnum::ADMIN
         ]);
-        
+
         // $admin->syncRoles(UserRoleEnum::ADMIN);
-        
+
 
         $guest = User::factory()->create([
             'email' => 'hamdj360@gmail.com',
@@ -118,5 +120,36 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // $guest->syncRoles(UserRoleEnum::GUEST);
+        $data = [
+            [
+                'name' => 'BROWN, 1997',
+                'description' => 'Rumus allometrik umum yang digunakan untuk menghitung biomassa hutan pada iklim kering adalah rumus Brown (1997). Rumus ini hanya memerlukan diameter pohon untuk menghitung biomassa. Rentang diameter yang digunakan berkisar antara 5 hingga 40 cm.',
+                'climate_type' => ClimateTypeEnum::DRY,
+            ],
+            [
+                'name' => 'BROWN, 1997',
+                'description' => 'Rumus allometrik umum yang digunakan untuk menghitung  biomassa hutan pada iklim basah adalah rumus Brown (1997). Rumus ini memerlukan diameter dan tinggi pohon untuk menghitung biomassa. Rentang diameter yang digunakan berkisar antara 4 hingga 112 cm.',
+                'climate_type' => ClimateTypeEnum::WET,
+            ],
+            [
+                'name' => 'BROWN, 1997',
+                'description' => 'Rumus allometrik umum yang digunakan untuk menghitung biomassa hutan pada iklim lembab adalah rumus Brown (1997). Rumus ini hanya memerlukan diameter pohon untuk menghitung biomassa. Rentang diameter yang digunakan berkisar antara 5 hingga 148 cm.',
+                'climate_type' => ClimateTypeEnum::MOIST,
+            ],
+            [
+                'name' => 'BROWN, 1995',
+                'description' => 'Rumus allometrik umum yang digunakan untuk menghitung biomassa hutan pada iklim lembab adalah rumus Brown (1995). Rumus ini membutuhkan data berat jenis pohon, diameter pohon, dan tinggi pohon untuk menentukan biomassa.',
+                'climate_type' => ClimateTypeEnum::MOIST,
+            ],
+            [
+                'name' => 'KETTERINGS, 2001',
+                'description' => 'Rumus allometrik umum yang digunakan untuk menghitung biomassa hutan pada iklim lembab adalah rumus Ketterings (2001). Rumus ini memerlukan berat jenis pohon dan diameter pohon untuk menghitung biomassa.',
+                'climate_type' => ClimateTypeEnum::MOIST,
+            ],
+        ];
+        foreach ($data as $item)
+        {
+            Calculation::factory()->create($item);
+        }
     }
 }
