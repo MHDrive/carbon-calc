@@ -1,14 +1,7 @@
 @php
-    $dryRecord = $dryRecord ?? null;
-    $dryRecordFirst = $dryRecord->first() ?? null;
-    if ($dryRecordFirst->climate_type == App\Enums\ClimateTypeEnum::DRY) {
-        $climateDescription = App\Enums\ClimateTypeEnum::DRY->getDescription();
-    } elseif ($dryRecordFirst->climate_type == App\Enums\ClimateTypeEnum::WET) {
-        $climateDescription = App\Enums\ClimateTypeEnum::WET->getDescription();
-    } else {
-        $climateDescription = App\Enums\ClimateTypeEnum::MOIST->getDescription();
-    }
-
+    $climateDescription = App\Enums\ClimateTypeEnum::DRY->getDescription();
+    // $climateDescription = App\Enums\ClimateTypeEnum::WET->getDescription();
+    // $climateDescription = App\Enums\ClimateTypeEnum::MOIST->getDescription();
 @endphp
 <x-filament-panels::page @class([
     'fi-resource-list-records-page',
@@ -16,32 +9,49 @@
 ])>
     <div class="flex flex-col gap-y-6">
         <x-filament-panels::resources.tabs />
-        <x-filament::section>
+        <x-filament::section class="section-change-password">
             <x-slot name="heading">
                 Kategori Iklim
             </x-slot>
-            <p class="font-semibold text-sm">{{ $climateDescription }}</p>
+            <div class="flex flex-row items-center justify-between">
+                <div class="flex-grow w-full whitespace-nowrap mr-5">
+                    <span class="text-xs font-semibold text-gray-600/50">
+                        ZONA IKLIM
+                    </span> <br>
+                    <strong class="text-sm">
+                        < 1500 </strong> <br>
+                            <p class="text-xs text-primary-600 font-bold mt-2">Iklim Kering</p> <br>
+                            <img src="{{ asset('/storage/images/dry.png') }}" alt="">
+                </div>
+                <div>
+                    <p class="font-semibold text-sm">{{ $climateDescription }}</p>
+                </div>
+            </div>
+
         </x-filament::section>
         <x-filament::section class="section-change-password">
             <x-slot name="heading">
-                    Kategori Rumus
+                Kategori Rumus
             </x-slot>
 
             <div class="flex items-center justify-center">
-                @foreach ($dryRecord as $item)
+                {{-- @foreach ($dryRecord as $item) --}}
+                <a href="{{ route('filament.admin.calculations.resources.climate-dries.create') }}">
                     <div
                         class="w-28 h-28 bg-[#E6EAE5] flex flex-col justify-between shadow-sm rounded-lg ring-1 ring-gray-950/50 dark:bg-gray-900 dark:ring-white/10 p-2">
                         <div class="flex-1 flex items-center justify-center">
-                            <span class="text-sm font-bold">{{ $item->name }}</span>
+                            <span class="text-sm font-bold">BROWN, 1997</span>
                         </div>
                         <div class="flex items-center justify-center">
                             <span class="flex justify-center font-bold">
                                 <x-filament::icon-button icon="heroicon-o-question-mark-circle"
-                                    tooltip="{{ $item->description }}" size="xl" color="black" />
+                                    tooltip="Rumus allometrik umum yang digunakan untuk menghitung biomassa hutan pada iklim kering adalah rumus Brown (1997). Rumus ini hanya memerlukan diameter pohon untuk menghitung biomassa. Rentang diameter yang digunakan berkisar antara 5 hingga 40 cm."
+                                    size="xl" color="black" />
                             </span>
                         </div>
                     </div>
-                @endforeach
+                </a>
+                {{-- @endforeach --}}
             </div>
         </x-filament::section>
     </div>

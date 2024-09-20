@@ -49,7 +49,7 @@ div header.fi-sidebar-header {
     @apply bg-[#5bc1468a]
 }
  /* tampilan header section form */
-.section-change-password .fi-section-header { @apply bg-[#5bc1468a] rounded-t-lg }
+.section-change-password .fi-section-header { @apply bg-primary-300 dark:bg-primary-500 rounded-t-lg }
 
 .section-change-password .fi-section-header .fi-section-header-heading { @apply text-black }
 
@@ -64,4 +64,10 @@ div header.fi-sidebar-header {
     @apply flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 py-1 bg-[#2b2f34] text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30
 }
 
- /* class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 bg-gray-100 dark:bg-white/5" */
+/* custom input */
+.fi-input {
+    @apply border-[#268129]
+}
+.fi-input-wrp {
+    @apply ring-1 ring-black
+}
