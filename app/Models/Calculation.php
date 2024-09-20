@@ -31,7 +31,8 @@ class Calculation extends Model
     protected function casts(): array
     {
         return [
-            'climate_type' => ClimateTypeEnum::class
+            'climate_type' => ClimateTypeEnum::class,
+            'meta' => 'array'
         ];
     }
 

@@ -72,7 +72,7 @@ class AdminPanelProvider extends PanelProvider
                 }
             )
             ->navigationItems(static::getNavigationItems())
-            ->unsavedChangesAlerts()
+            // ->unsavedChangesAlerts()
             ->login(MyLogin::class)
             ->registration(MyRegister::class)
             ->passwordReset(RequestPasswordReset::class)
