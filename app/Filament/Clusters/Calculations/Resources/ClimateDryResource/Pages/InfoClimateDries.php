@@ -15,8 +15,12 @@ class InfoClimateDries extends ListRecords
     public $dryRecord;
     public function mount(): void
     {
+        parent::mount();
         $this->dryRecord = static::getResource()::getEloquentQuery()->where('climate_type', 'dry')->get();
-        $this->authorizeAccess();
-        $this->loadDefaultActiveTab();
+    }
+
+    public function getBreadcrumb(): ?string
+    {
+        return static::$breadcrumb ?? 'Info';
     }
 }

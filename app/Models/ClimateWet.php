@@ -2,12 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\ClimateTypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ClimateWet extends Model
 {
     use HasFactory;
 
     protected $table = 'calculations';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Membatasi query hanya untuk `climate_type` = 'dry'
+        static::addGlobalScope('climate_type', function ($builder) {
+            $builder->where('climate_type', ClimateTypeEnum::WET);
+        });
+    }
 }

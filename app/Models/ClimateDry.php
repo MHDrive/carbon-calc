@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Plank\Metable\Metable;
+use App\Enums\ClimateTypeEnum;
 use App\Models\Calculation as Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ClimateDry extends Model
 {
-    use HasFactory;
+    use HasFactory, Metable;
 
     protected $table = 'calculations';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Membatasi query hanya untuk `climate_type` = 'dry'
+        static::addGlobalScope('climate_type', function ($builder) {
+            $builder->where('climate_type', ClimateTypeEnum::DRY);
+        });
+    }
 }

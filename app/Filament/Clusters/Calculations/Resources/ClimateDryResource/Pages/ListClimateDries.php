@@ -10,10 +10,8 @@ class ListClimateDries extends ListRecords
 {
     protected static string $resource = ClimateDryResource::class;
 
-    protected function getHeaderActions(): array
+    public function getBreadcrumb(): ?string
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return static::$breadcrumb ?? 'Riwayat';
     }
 }

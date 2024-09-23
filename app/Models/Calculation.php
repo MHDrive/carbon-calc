@@ -13,19 +13,20 @@ class Calculation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'climate_type',
-        'description',
-        'province',
-        'regency',
-        'subdistrict',
-        'village',
+        'provinces',
+        'regencies',
+        'districts',
+        'villages',
         'forest_name',
         'surface_area',
-        'total_plot',
+        'surface_area_unit',
+        'method',
         'meta',
         'total_biomass',
         'total_carbon_stocks',
+        // 'total_biomass_unit',
+        // 'total_carbon_stocks_unit',
     ];
 
     protected function casts(): array
