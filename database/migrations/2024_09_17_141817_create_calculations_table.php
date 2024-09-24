@@ -23,10 +23,10 @@ return new class extends Migration
             $table->string('surface_area_unit')->nullable(); // luas area perunit
             $table->enum('method', ['sampling', 'sensus'])->nullable(); // luas area
             $table->json('meta')->nullable(); // data input
-            $table->string('total_biomass')->nullable(); // total biomassa
-            // $table->string('total_biomass_unit')->nullable(); // total biomassa
-            $table->string('total_carbon_stocks')->nullable(); // total cafangan karbon
-            // $table->string('total_carbon_stocks_unit')->nullable(); // total cafangan karbon
+            $table->string('total_biomass_tonPerHa')->nullable(); // total biomassa
+            $table->string('total_carbon_stocks_tonPerHa')->nullable(); // total cafangan karbon
+            $table->string('total_biomass_kgPerHa')->nullable(); // total biomassa
+            $table->string('total_carbon_stocks_kgPerHa')->nullable(); // total cafangan karbon
             $table->timestamps();
         });
     }

@@ -23,10 +23,10 @@ class Calculation extends Model
         'surface_area_unit',
         'method',
         'meta',
-        'total_biomass',
-        'total_carbon_stocks',
-        // 'total_biomass_unit',
-        // 'total_carbon_stocks_unit',
+        'total_biomass_tonPerHa',
+        'total_carbon_stocks_tonPerHa',
+        'total_biomass_kgPerHa',
+        'total_carbon_stocks_kgPerHa',
     ];
 
     protected function casts(): array

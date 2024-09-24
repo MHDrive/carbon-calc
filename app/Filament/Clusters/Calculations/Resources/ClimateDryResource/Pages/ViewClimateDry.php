@@ -2,8 +2,9 @@
 
 namespace App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables;
+use Filament\Actions;
+use Plank\Metable\Meta;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Contracts\HasTable;
@@ -16,7 +17,7 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Tables\Concerns\InteractsWithTable;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource;
 
-class ViewClimateDry extends ViewRecord 
+class ViewClimateDry extends ViewRecord
 // implements HasTable
 {
     // use InteractsWithTable;
@@ -30,7 +31,7 @@ class ViewClimateDry extends ViewRecord
                     ->schema([
                         ViewEntry::make('info-result')
                             ->viewData([
-                                'data' => $this->getRecord()
+                                'data' => $this->getRecord(),
                             ])
                             ->view('filament.infolists.components.info-result-calculation'),
                     ])
@@ -43,7 +44,7 @@ class ViewClimateDry extends ViewRecord
     // public function table(Table $table): Table
     // {
     //     return $table
-    //         ->query(fn(): Builder => (static::getModel()::first()->meta->query())) // query menampilkan data
+    //         ->query(fn() => dd(Meta::where('metable_type', static::getModel())->where('metable_id', $this->getRecord()->id)->get()))
     //         ->columns([
     //             Tables\Columns\TextColumn::make('name')
     //                 ->searchable()

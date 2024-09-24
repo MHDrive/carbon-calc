@@ -25,6 +25,7 @@ use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\ViewCl
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\CreateClimateDry;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\InfoClimateDries;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\ListClimateDries;
+use Filament\Forms\Components\Component;
 
 class ClimateDryResource extends Resource
 {
@@ -138,106 +139,11 @@ class ClimateDryResource extends Resource
                                                 'sensus' => 'Sensus',
                                             ])
                                             ->live(debounce: 300),
-                                        Forms\Components\Repeater::make('meta') // meta json untuk menampung data hitung
-                                            ->hiddenLabel()
-                                            ->visible(fn($get) => $get('method')) // show / !show
-                                            ->columnSpanFull()
-                                            ->addable(fn(Get $get) => $get('method') === 'sampling')
-                                            ->collapsible(fn(Get $get) => $get('method') === 'sampling')
-                                            ->addActionLabel('Tambah Data')
-                                            ->reorderableWithDragAndDrop(false) // menghilangkan fitur drag and drop
-                                            // ->defaultItems(0)  // nilai awal adalah 0
-                                            ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, callable $set, callable $get) { // manipulasi data meta
-                                                // Pastikan state adalah array
-                                                // dd($data);
-                                                if (is_array($state)) {
-                                                    // Dapatkan array key numerik untuk mengakses item
-                                                    $keys = array_keys($state);
-                                                    foreach ($keys as $index => $key) {
-                                                        $set("meta.{$key}.plot", $index + 1);
-                                                    }
-                                                }
-                                            })
-                                            ->afterStateUpdated(function ($state, callable $set, callable $get) { // manupulasi data meta
-                                                // Jalankan setiap kali ada perubahan pada state repeater
-                                                if (is_array($state)) {
-                                                    $keys = array_keys($state);
-                                                    foreach ($keys as $index => $key) {
-                                                        $set("meta.{$key}.plot", $index + 1);
-                                                    }
-                                                }
-                                            })
-                                            ->schema([
-                                                Forms\Components\TextInput::make('plot')
-                                                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true) // disabled bila bukan sampling
-                                                    ->hidden(fn($get) => $get('../../method') == 'sampling' ? false : true), // sembunyikan bila bukan samplig
-                                                Forms\Components\TextInput::make('plot_area')
-                                                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true) // disabled bila bukan sampling
-                                                    ->hidden(fn($get) => $get('../../method') == 'sampling' ? false : true) // sembunyikan bila bukan samplig
-                                                    ->numeric(),
-                                                Forms\Components\Hidden::make('total_biomass_perplot')
-                                                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true), // disabled bila bukan sampling
-                                                Forms\Components\Hidden::make('total_biomass_perplot')
-                                                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true), // disabled bila bukan sampling,
-                                                Forms\Components\Repeater::make('input_calc')
-                                                    ->addActionLabel('Tambah Pohon')
-                                                    ->hiddenLabel()
-                                                    ->columnSpanFull()
-                                                    ->collapsed() // fitur dropdown
-                                                    ->schema([
-                                                        Forms\Components\TextInput::make('tree_name') // nama pohon
-                                                            ->label('Nama Pohon')
-                                                            ->live(onBlur: true)
-                                                            ->required(),
+                                        static::getRepeaterSampling(),
+                                        static::getRepeaterSensus(),
+                                        // Forms\Components\Hidden::make('total_biomass'),
+                                        // Forms\Components\Hidden::make('total_carbon'),
 
-                                                        Forms\Components\Select::make('scientific_name') // nama ilmiah pohon
-                                                            ->label('Nama Ilmiah Pohon')
-                                                            ->options(fn(Get $get) => static::getTaxaTree($get('tree_name'))),
-                                                        TextInputSelectAffix::make('circumference') // keliling
-                                                            ->label('Keliling')
-                                                            ->numeric() // hanya untuk number
-                                                            ->live(debounce: 500) // keliling
-                                                            ->afterStateUpdated(function (Set $set, $state) {
-                                                                $diameter = $set('diameter', round($state / 3.14, 2));
-                                                                $biomass = $set('biomass', round(0.139 * pow($diameter, 2.32)));
-                                                                $set('carbon', round($biomass * 0.5));
-                                                            })
-                                                            ->select(
-                                                                fn() => Forms\Components\Select::make('circumference_unit') // select unit
-                                                                    ->extraAttributes([
-                                                                        'class' => 'w-[72px]'
-                                                                    ])
-                                                                    ->live(debounce: 500)
-                                                                    ->default('cm')
-                                                                    ->options([
-                                                                        'cm' => 'cm',
-                                                                    ])
-                                                            ),
-                                                        TextInputSelectAffix::make('diameter') // diameter
-                                                            ->label('Diameter')
-                                                            ->numeric()
-                                                            ->live(debounce: 500) // keliling
-                                                            ->afterStateUpdated(function (Set $set, $state) {
-                                                                $set('circumference', 3.14 * $state);
-                                                                $biomass = $set('biomass', round(0.139 * pow($state, 2.32)));
-                                                                $set('carbon', round($biomass * 0.5));
-                                                            })
-                                                            ->select(
-                                                                fn() => Forms\Components\Select::make('diameter_unit') // select unit
-                                                                    ->extraAttributes([
-                                                                        'class' => 'w-[72px]'
-                                                                    ])
-                                                                    ->default('cm')
-                                                                    ->options([
-                                                                        'cm' => 'cm',
-                                                                    ])
-                                                            ),
-                                                        Forms\Components\TextInput::make('biomass'), // nama pohon
-                                                        Forms\Components\TextInput::make('carbon') // nama pohon
-
-
-                                                    ]),
-                                            ]),
                                     ])->columns(2)->maxWidth('md') // mengatur ukuran form dan input
                             ])->extraAttributes(['class' => 'flex justify-center']) // mengatur posisi form
                     ])
@@ -253,8 +159,8 @@ class ClimateDryResource extends Resource
                 Tables\Columns\TextColumn::make('forest_name')
                     ->sortable()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('surface_area')
-                    ->getStateUsing(fn ($record) => $record->surface_area. ' ' . $record->surface_area_unit)
+                Tables\Columns\TextColumn::make('surface_area')
+                    ->getStateUsing(fn($record) => $record->surface_area . ' ' . $record->surface_area_unit)
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('method')
@@ -273,7 +179,7 @@ class ClimateDryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->url(fn($record) =>route('filament.admin.calculations.resources.climate-dries.view-result', ['record' => $record->id])),
+                Tables\Actions\ViewAction::make()->url(fn($record) => route('filament.admin.calculations.resources.climate-dries.view-result', ['record' => $record->id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -506,4 +412,113 @@ class ClimateDryResource extends Resource
 
     //     return '';
     // }
+
+    public static function getRepeaterSensus(): Component
+    {
+        return
+            Forms\Components\Repeater::make('meta') // meta json untuk menampung data hitung
+            ->hiddenLabel()
+            ->visible(fn($get) => $get('method') === 'sensus') // show / !show
+            ->columnSpanFull()
+            ->addable(false)
+            ->collapsible(false)
+            ->addActionLabel('Tambah Data')
+            ->reorderableWithDragAndDrop(false) // menghilangkan fitur drag and drop
+            ->schema([
+                static::getSubRepeater(),
+            ]);
+    }
+    public static function getRepeaterSampling(): Component
+    {
+        return
+            Forms\Components\Repeater::make('meta') // meta json untuk menampung data hitung
+            ->hiddenLabel()
+            ->visible(fn($get) => $get('method') === 'sampling') // show / !show
+            ->columnSpanFull()
+            ->collapsible()
+            ->addActionLabel('Tambah Data')
+            ->reorderableWithDragAndDrop(false) // menghilangkan fitur drag and drop
+            ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, Set $set) { // manipulasi data meta
+                // Pastikan state adalah array
+                if (is_array($state)) {
+                    $keys = array_keys($state);
+                    foreach ($keys as $index => $key) {
+                        $set("meta.{$key}.plot", $index + 1);
+                    }
+                }
+            })
+            ->afterStateUpdated(function ($state, Set $set) { // manupulasi data meta
+                // Jalankan setiap kali ada perubahan pada state repeater
+                if (is_array($state)) {
+                    $keys = array_keys($state);
+                    foreach ($keys as $index => $key) {
+                        $set("meta.{$key}.plot", $index + 1);
+                    }
+                }
+            })
+            ->schema([
+                Forms\Components\TextInput::make('plot')
+                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true), // disabled bila bukan sampling
+                // Forms\Components\TextInput::make('plot_area')->suffix('m²'),
+                TextInputSelectAffix::make('plot_area') // keliling
+                    ->label('Luas Plot')
+                    ->numeric() // hanya untuk number
+                    ->select(
+                        fn() => Forms\Components\Select::make('plot_area_unit') // select unit
+                            ->extraAttributes([
+                                'class' => 'w-[72px]'
+                            ])
+                            ->default('m²') // nilai default
+                            ->options([
+                                'm²' => 'm²',
+                                'km²' => 'km²',
+                                'ha' => 'ha'
+                            ])
+                    ),
+                static::getSubRepeater(),
+            ]);
+    }
+
+    public static function getSubRepeater(): Component
+    {
+        return Forms\Components\Repeater::make('input_calc')
+            ->addActionLabel('Tambah Pohon')
+            ->hiddenLabel()
+            ->columnSpanFull()
+            ->collapsed() // fitur dropdown
+            ->schema([
+                Forms\Components\TextInput::make('tree_name') // nama pohon
+                    ->label('Nama Pohon')
+                    ->live(onBlur: true)
+                    ->required(),
+
+                Forms\Components\Select::make('scientific_name') // nama ilmiah pohon
+                    ->label('Nama Ilmiah Pohon')
+                    ->options(fn(Get $get) => static::getTaxaTree($get('tree_name'))),
+                Forms\Components\TextInput::make('circumference') // keliling
+                    ->label('Keliling')
+                    ->numeric() // hanya untuk number
+                    ->live(debounce: 500) // keliling
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $diameter = $set('diameter', round($state / 3.14, 2));
+                        $biomass = $set('biomass_perKg', round(0.139 * pow($diameter, 2.32)));
+                        $set('carbon_perKg', round($biomass * 0.5));
+                    })
+                    ->suffix('cm'),
+                Forms\Components\TextInput::make('diameter') // diameter
+                    ->label('Diameter')
+                    ->numeric()
+                    ->live(debounce: 500) // keliling
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('circumference', 3.14 * $state);
+                        $biomass = $set('biomass_perKg', round(0.139 * pow($state, 2.32)));
+                        $set('carbon_perKg', round($biomass * 0.5));
+                    })
+                    ->suffix('cm'),
+                Forms\Components\Hidden::make('biomass_perKg'), // nama pohon
+                Forms\Components\Hidden::make('carbon_perKg') // nama pohon
+
+
+            ]);
+    }
 }

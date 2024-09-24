@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Plank\Metable\Meta;
 use Plank\Metable\Metable;
 use App\Enums\ClimateTypeEnum;
 use App\Models\Calculation as Model;
@@ -22,4 +23,9 @@ class ClimateDry extends Model
             $builder->where('climate_type', ClimateTypeEnum::DRY);
         });
     }
+
+//     public function meta()
+// {
+//     return $this->morphMany(Meta::class, 'metable');
+// }
 }
