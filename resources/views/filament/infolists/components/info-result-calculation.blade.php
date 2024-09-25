@@ -1,5 +1,5 @@
 @php
-    dd($data, $data['meta']);
+    // dd($data);
     $isSensus = $data['method'] === 'sensus';
     // konversi nilai luas hutan menjadi ha {
     if ($data['surface_area_unit'] === 'm²') {
@@ -29,7 +29,7 @@
 @endphp
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     <div>
-        
+
         <h1 class="text-2xl mb-4"><strong>Total Keseluruhan (Grand Total)</strong></h1>
         <div class="text-sm">
             <div class="flex items-center space-x-2 pl-5">
@@ -65,11 +65,12 @@
         <div class="flex flex-col pt-4">
             <span class="text-lg font-bold">Total Biomassa</span>
             <p class="text-4xl"><span
-                    class="text-primary-600">{{ round($data['total_biomass'], 2) }}</span><strong>
+                    class="text-primary-600">{{ number_format($data['total_biomass_tonPerHa'], 2) }}</span><strong>
                     Ton/Ha</strong></p>
             <span class="text-lg font-bold pt-4">Total Cadangan Karbon</span>
             <p class="text-4xl"><span
-                    class="text-primary-600">{{ round($data['total_carbon_stocks'],2) }}</span><strong> Ton/Ha</strong>
+                    class="text-primary-600">{{ number_format($data['total_carbon_stocks_tonPerHa'], 2) }}</span><strong>
+                    Ton/Ha</strong>
             </p>
         </div>
         <hr class="border-2 my-4">
@@ -121,61 +122,12 @@
                             <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
                                 @php
                                     $currentPlot = null;
-                                    $plotBiomassKg = 0;
-                                    $plotCarbonKg = 0;
-                                    $plotBiomassTon = 0;
-                                    $plotCarbonTon = 0;
-
-                                    $totalBiomassKg = 0;
-                                    $totalCarbonKg = 0;
-                                    $totalBiomassTon = 0;
-                                    $totalCarbonTon = 0;
                                 @endphp
 
                                 @foreach ($data['meta'] as $item)
                                     @if (!$isSensus && $item['plot'] != $currentPlot)
-                                        @if ($currentPlot !== null)
-                                            @php
-                                                // Pastikan plot_area tidak nol untuk menghindari division by zero
-                                                if ($item['plot_area'] > 0) {
-                                                    $plotBiomassKgPerHa = round(
-                                                        $plotBiomassKg * (10000 / $item['plot_area']),
-                                                        2,
-                                                    );
-                                                    $plotCarbonKgPerHa = round(
-                                                        $plotCarbonKg * (10000 / $item['plot_area']),
-                                                        2,
-                                                    );
-                                                    $plotBiomassTonPerHa = round(
-                                                        $plotBiomassTon * (10000 / $item['plot_area']),
-                                                        2,
-                                                    );
-                                                    $plotCarbonTonPerHa = round(
-                                                        $plotCarbonTon * (10000 / $item['plot_area']),
-                                                        2,
-                                                    );
-                                                } else {
-                                                    $plotBiomassKgPerHa = 0;
-                                                    $plotCarbonKgPerHa = 0;
-                                                    $plotBiomassTonPerHa = 0;
-                                                    $plotCarbonTonPerHa = 0;
-                                                }
-                                            @endphp
-                                            <tr class="bg-gray-300 dark:bg-gray-600">
-                                                <td colspan="4" class="text-left font-bold">Total Plot
-                                                    {{ $currentPlot }}</td>
-                                                <td class="px-2 py-2 font-bold">{{ $plotBiomassKgPerHa }} Kg/ha</td>
-                                                <td class="px-2 py-2 font-bold">{{ $plotCarbonKgPerHa }} Kg/ha</td>
-                                                <td class="px-2 py-2 font-bold">{{ $plotBiomassTonPerHa }} Ton/ha</td>
-                                                <td class="px-2 py-2 font-bold">{{ $plotCarbonTonPerHa }} Ton/ha</td>
-                                            </tr>
-                                        @endif
                                         @php
                                             $currentPlot = $item['plot'];
-                                            $plotBiomassKg = 0;
-                                            $plotCarbonKg = 0;
-                                            $plotBiomassTon = 0;
-                                            $plotCarbonTon = 0;
                                         @endphp
                                         <tr
                                             class="divide-x divide-gray-200 dark:divide-white/5 [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
@@ -184,27 +136,7 @@
                                             </td>
                                         </tr>
                                     @endif
-
                                     @foreach ($item['input_calc'] as $calc)
-                                        @php
-                                            $biomassKg = $calc['biomass'];
-                                            $carbonKg = $calc['carbon'];
-                                            $biomassTon = round($calc['biomass'] / 1000, 2);
-                                            $carbonTon = round($calc['carbon'] / 1000, 2);
-
-                                            if (!$isSensus) {
-                                                $plotBiomassKg += $biomassKg;
-                                                $plotCarbonKg += $carbonKg;
-                                                $plotBiomassTon += $biomassTon;
-                                                $plotCarbonTon += $carbonTon;
-                                            }
-
-                                            $totalBiomassKg += $biomassKg;
-                                            $totalCarbonKg += $carbonKg;
-                                            $totalBiomassTon += $biomassTon;
-                                            $totalCarbonTon += $carbonTon;
-                                        @endphp
-
                                         <tr
                                             class="divide-x divide-gray-200 dark:divide-white/5 [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
                                             <td
@@ -218,47 +150,53 @@
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
                                                 {{ $calc['scientific_name'] }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
-                                                {{ $calc['biomass'] }}</td>
+                                                {{ $calc['biomass_perKg'] }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
-                                                {{ $calc['carbon'] }}</td>
+                                                {{ $calc['carbon_perKg'] }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
-                                                {{ round($calc['biomass'] / 1000, 2) }}</td>
+                                                {{ round($calc['biomass_perKg'] / 1000, 2) }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
-                                                {{ round($calc['carbon'] / 1000, 2) }}</td>
+                                                {{ round($calc['carbon_perKg'] / 1000, 2) }}</td>
                                         </tr>
                                     @endforeach
+                                    {{-- @dd($item['plot']) --}}
+                                    @if ($currentPlot !== null)
+                                        <tr class="bg-gray-300 dark:bg-gray-600">
+                                            <td colspan="4" class="text-left font-bold px-2 py-2">Total Plot
+                                                {{ $currentPlot }}</td>
+                                            <td class="px-2 py-2 font-bold">
+                                                {{ $item['total_biomass_perplot_kgPerHa'] }} Kg/ha</td>
+                                            <td class="px-2 py-2 font-bold">
+                                                {{ $item['total_carbon_perplot_kgPerHa'] }} Kg/ha</td>
+                                            <td class="px-2 py-2 font-bold">
+                                                {{ $item['total_biomass_perplot_tonPerHa'] }} Ton/ha</td>
+                                            <td class="px-2 py-2 font-bold">
+                                                {{ $item['total_carbon_perplot_tonPerHa'] }} Ton/ha</td>
+                                        </tr>
+                                    @endif
                                 @endforeach
-
-                                {{-- Menampilkan total keseluruhan --}}
-                                @php
-                                    // dd($totalBiomassKg);
-                                    if ($isSensus) {
-                                        // Pastikan forest_area tidak nol untuk menghindari division by zero
-                                        if ($data['surface_area'] > 0) {
-                                            $totalBiomassKgPerHa = $totalBiomassKg * (10000 / $data['surface_area']);
-                                            $totalCarbonKgPerHa = $totalCarbonKg * (10000 / $data['surface_area']);
-                                            $totalBiomassTonPerHa = $totalBiomassTon * (10000 / $data['surface_area']);
-                                            $totalCarbonTonPerHa = $totalCarbonTon * (10000 / $data['surface_area']);
-                                        } else {
-                                            $totalBiomassKgPerHa = 0;
-                                            $totalCarbonKgPerHa = 0;
-                                            $totalBiomassTonPerHa = 0;
-                                            $totalCarbonTonPerHa = 0;
-                                        }
-                                    } else {
-                                        // Jika sampling, total keseluruhan hanya berupa penjumlahan total per plot
-                                        $totalBiomassKgPerHa = $totalBiomassKg; // Sampling langsung menggunakan total
-                                        $totalCarbonKgPerHa = $totalCarbonKg;
-                                        $totalBiomassTonPerHa = $totalBiomassTon;
-                                        $totalCarbonTonPerHa = $totalCarbonTon;
-                                    }
-                                @endphp
-                                <tr class="bg-gray-300 dark:bg-gray-600">
-                                    <td colspan="4" class="text-left font-bold">Total Keseluruhan</td>
-                                    <td class="px-2 py-2 font-bold">{{ $totalBiomassKgPerHa }} Kg/ha</td>
-                                    <td class="px-2 py-2 font-bold">{{ $totalCarbonKgPerHa }} Kg/ha</td>
-                                    <td class="px-2 py-2 font-bold">{{ $totalBiomassTonPerHa }} Ton/ha</td>
-                                    <td class="px-2 py-2 font-bold">{{ $totalCarbonTonPerHa }} Ton/ha</td>
+                                {{-- @if (!$isSensus)
+                                    <tr class="bg-gray-300 dark:bg-gray-600">
+                                        <td colspan="4" class="text-left font-bold px-2 py-2">Total Plot
+                                            {{ $currentPlot }}</td>
+                                        <td class="px-2 py-2 font-bold">
+                                            {{ $item['total_biomass_perplot_kgPerHa'] }} Kg/ha</td>
+                                        <td class="px-2 py-2 font-bold">
+                                            {{ $item['total_carbon_perplot_kgPerHa'] }} Kg/ha</td>
+                                        <td class="px-2 py-2 font-bold">
+                                            {{ $item['total_biomass_perplot_tonPerHa'] }} Ton/ha</td>
+                                        <td class="px-2 py-2 font-bold">
+                                            {{ $item['total_carbon_perplot_tonPerHa'] }} Ton/ha</td>
+                                    </tr>
+                                @endif --}}
+                                <tr class="bg-gray-400 dark:bg-gray-800">
+                                    <td colspan="4" class="text-left font-bold px-2 py-2">Total Keseluruhan</td>
+                                    <td class="px-2 py-2 font-bold">{{ $data['total_biomass_kgPerHa'] }} Kg/ha</td>
+                                    <td class="px-2 py-2 font-bold">{{ $data['total_carbon_stocks_kgPerHa'] }} Kg/ha
+                                    </td>
+                                    <td class="px-2 py-2 font-bold">{{ $data['total_biomass_tonPerHa'] }} Ton/ha</td>
+                                    <td class="px-2 py-2 font-bold">{{ $data['total_carbon_stocks_tonPerHa'] }} Ton/ha
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
