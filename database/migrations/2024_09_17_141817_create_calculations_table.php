@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,7 +14,9 @@ return new class extends Migration
     {
         Schema::create('calculations', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->enum('climate_type', ['dry', 'wet', 'moist'])->nullable(); // jenis iklim
+            $table->string('formula_type')->nullable(); // jenis iklim
             $table->string('provinces')->nullable(); // provinsi
             $table->string('regencies')->nullable(); // kabupaten
             $table->string('districts')->nullable(); // kecamatan

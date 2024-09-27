@@ -1,5 +1,5 @@
 @php
-    // dd($data);
+    // dd($data['meta']);
     $isSensus = $data['method'] === 'sensus';
     // konversi nilai luas hutan menjadi ha {
     if ($data['surface_area_unit'] === 'm²') {
@@ -144,7 +144,7 @@
                                                 {{ $loop->iteration }}</td>
                                             <td
                                                 class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4 text-center">
-                                                {{ $item['plot'] ?: '-' }}</td>
+                                                {{ $item['plot'] ?? '-' }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
                                                 {{ $calc['tree_name'] }}</td>
                                             <td class="px-2 py-2 sm:first-of-type:ps-4 sm:last-of-type:pe-4">
@@ -202,7 +202,6 @@
                         </table>
                     </div>
                 </div>
-                {{-- {{ $this->table }} --}}
 
                 <div class="mt-3 flex flex-row w-52 items-center justify-start group relative">
                     <x-filament::icon-button icon="heroicon-o-question-mark-circle" color="default" />

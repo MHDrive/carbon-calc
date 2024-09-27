@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ClimateTypeEnum;
+use App\Enums\FormulaTypeEnum;
 use App\Models\Recapitulation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,9 @@ class Calculation extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'climate_type',
+        "formula_type",
         'provinces',
         'regencies',
         'districts',
@@ -33,12 +36,8 @@ class Calculation extends Model
     {
         return [
             'climate_type' => ClimateTypeEnum::class,
+            'formula_type' => FormulaTypeEnum::class,
             'meta' => 'array'
         ];
-    }
-
-    public function recapitulation(): HasMany
-    {
-        return $this->hasMany(Recapitulation::class);
     }
 }

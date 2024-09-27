@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ClimateTypeEnum;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Calculation as Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ClimateMoist extends Model

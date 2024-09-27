@@ -2,20 +2,27 @@
 
 namespace App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages;
 
-use App\Enums\ClimateTypeEnum;
 use Filament\Actions;
+use App\Enums\ClimateTypeEnum;
+use App\Enums\FormulaTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource;
 
-class CreateClimateDry extends CreateRecord
+class CreateBrown1997Dry extends CreateRecord
 {
     protected static string $resource = ClimateDryResource::class;
 
     public $newData;
 
+    public function getBreadcrumb(): string
+    {
+        return static::$breadcrumb ?? 'Brown-1997';
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
+        $data['meta'] = $data['meta_sampling'] ?? $data['meta_sensus'] ?? null;
         // Konversi surface_area berdasarkan unit yang dipilih
         if ($data['surface_area_unit'] == 'km²') {
             $forestArea = $data['surface_area'] * 1000000; // 1 km² = 1.000.000 m²
@@ -37,16 +44,21 @@ class CreateClimateDry extends CreateRecord
             $totalCarbon = 0;  // Karbon per plot
 
             // Konversi plot_area berdasarkan unit yang dipilih di dalam meta
-            if ($meta['plot_area_unit'] == 'km²') {
-                $plotArea = $meta['plot_area'] * 1000000; // 1 km² = 1.000.000 m²
-            } elseif ($meta['plot_area_unit'] == 'ha') {
-                $plotArea = $meta['plot_area'] * 10000; // 1 ha = 10.000 m²
-            } else {
-                $plotArea = $meta['plot_area']; // m²
+            if ($data['method'] == 'sampling') {
+                if ($meta['plot_area_unit'] == 'km²') {
+                    $plotArea = $meta['plot_area'] * 1000000; // 1 km² = 1.000.000 m²
+                } elseif ($meta['plot_area_unit'] == 'ha') {
+                    $plotArea = $meta['plot_area'] * 10000; // 1 ha = 10.000 m²
+                } else {
+                    $plotArea = $meta['plot_area']; // m²
+                }
             }
 
             // Loop melalui input_calc untuk menjumlahkan biomass dan carbon per plot
-            foreach ($meta['input_calc'] as $input) {
+            foreach ($meta['input_calc'] as &$input) {
+                $input['biomass_perKg'] = round((0.139 * pow($input['diameter'], 2.32)), 2);
+                $input['carbon_perKg'] = round(($input['biomass_perKg'] * 0.5), 2);
+
                 $totalBiomass += $input['biomass_perKg']; // Tambahkan nilai biomass
                 $totalCarbon += $input['carbon_perKg'];   // Tambahkan nilai karbon
             }
@@ -85,6 +97,7 @@ class CreateClimateDry extends CreateRecord
         $data['total_biomass_kgPerHa'] = $totalBiomassAllKgPerHa;
         $data['total_carbon_stocks_kgPerHa'] = $totalCarbonAllKgPerHa;
         $data['climate_type'] = ClimateTypeEnum::DRY;
+        $data['formula_type'] = FormulaTypeEnum::BROWN1997;
 
         // Buat record baru
         $record = static::getModel()::create($data);

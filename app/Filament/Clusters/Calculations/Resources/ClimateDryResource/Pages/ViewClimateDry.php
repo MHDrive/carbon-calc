@@ -23,6 +23,11 @@ class ViewClimateDry extends ViewRecord
     // use InteractsWithTable;
     protected static string $resource = ClimateDryResource::class;
 
+    public function getBreadcrumb(): string
+    {
+        return static::$breadcrumb ?? 'hasil';
+    }
+    
     protected function makeInfolist(): Infolist
     {
         return parent::makeInfolist()
@@ -30,6 +35,7 @@ class ViewClimateDry extends ViewRecord
                 Section::make()
                     ->schema([
                         ViewEntry::make('info-result')
+                        ->hiddenLabel()
                             ->viewData([
                                 'data' => $this->getRecord(),
                             ])
