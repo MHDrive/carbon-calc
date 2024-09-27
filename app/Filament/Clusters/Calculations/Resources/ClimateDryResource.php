@@ -5,185 +5,190 @@ namespace App\Filament\Clusters\Calculations\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use App\Models\ClimateDry;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use App\Services\Classes\ApiService;
 use Illuminate\Support\Facades\Http;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Cache;
 use App\Filament\Clusters\Calculations;
+use Filament\Forms\Components\Component;
 use Filament\Pages\SubNavigationPosition;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Marvinosswald\FilamentInputSelectAffix\TextInputSelectAffix;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\RelationManagers;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\EditClimateDry;
+use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\ViewClimateDry;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\CreateClimateDry;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\InfoClimateDries;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\ListClimateDries;
-use Filament\Forms\Set;
+use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\CreateBrown1997Dry;
+use Ramsey\Uuid\Type\Decimal;
 
 class ClimateDryResource extends Resource
 {
+    // model
     protected static ?string $model = ClimateDry::class;
 
+    // icon
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // position navigation sub sidebar
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
+    // parent cluster
     protected static ?string $cluster = Calculations::class;
 
+    // method form
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make('Hidung Cadangan Karbon')
+                    ->headerActions([
+                        Forms\Components\Actions\Action::make('Riwayat')
+                            ->url(route('filament.admin.calculations.resources.climate-dries.history')),
+                    ])
                     ->schema([
                         Forms\Components\Group::make()
                             ->schema([
                                 Forms\Components\Group::make()
                                     ->schema([
-                                        Forms\Components\Select::make('provinces')
+                                        Forms\Components\Select::make('select_provinces') // ambil id dan update nama untuk di set ke input provinsi
                                             ->label('Provinsi')
-                                            // ->options(static::getProvinces())
-                                            // ->searchable()
-                                            // ->getSearchResultsUsing(fn(string $search) => static::getProvinces($search))
-                                            // ->live(onBlur: true)
+                                            ->options(ApiService::getProvinces()) // mengambil data api provinsi
+                                            ->searchable()
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function ($state, Set $set) {
+                                                $provinceData = ApiService::getProvinces()[$state] ?? null;
+                                                if ($provinceData) {
+                                                    $set('provinces', $provinceData); // simpan nama provinsi
+                                                }
+                                                $set('select_regencies', null); // Reset kabupaten saat provinsi diubah
+                                                $set('select_districts', null); // Reset kecamatan saat provinsi diubah
+                                                $set('select_villages', null);  // Reset desa saat provinsi diubah
+                                            })
                                             ->required(false),
-                                        Forms\Components\Select::make('regencies')
+                                        Forms\Components\Hidden::make('provinces'), // input hidden provinsi
+                                        Forms\Components\Select::make('select_regencies') // ambil id dan update nama untuk di set ke input kabupaten
                                             ->label('Kabupaten')
-                                            // ->options(fn($get) => static::getRegencies($get('provinces')))
-                                            // ->live(onBlur: true)
-                                            // ->searchable()
-                                            // ->getSearchResultsUsing(fn(string $search, $get) => static::getRegencies($get('provinces'), $search))
+                                            ->options(fn(Get $get) => ApiService::getRegencies($get('select_provinces'))) // mengambil data api kabupaten
+                                            ->live(onBlur: true)
+                                            ->searchable()
+                                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                                $regencyData = ApiService::getRegencies($get('select_provinces'))[$state] ?? null;
+                                                if ($regencyData) {
+                                                    $set('regencies', $regencyData); // Simpan nama kabupaten
+                                                }
+                                                $set('select_districts', null); // Reset kecamatan saat kabupaten diubah
+                                                $set('select_villages', null);  // Reset desa saat kabupaten diubah
+                                            })
                                             ->required(false),
-                                        Forms\Components\Select::make('districts')
+                                        Forms\Components\Hidden::make('regencies'), // input hidden kabupaten
+                                        Forms\Components\Select::make('select_districts') // ambil id dan update nama untuk di set ke input kec
                                             ->label('Kecamatan')
-                                            // ->options(fn($get) => static::getDistricts($get('regencies')))
-                                            // ->live(onBlur: true)
-                                            // ->searchable()
-                                            // ->getSearchResultsUsing(fn(string $search, $get) => static::getDistricts($get('regencies'), $search))
+                                            ->options(fn(Get $get) => ApiService::getDistricts($get('select_regencies'))) // mengambil data api kec
+                                            ->live(onBlur: true)
+                                            ->searchable()
+                                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                                $districtData = ApiService::getDistricts($get('select_regencies'))[$state] ?? null;
+                                                if ($districtData) {
+                                                    $set('districts', $districtData); // Simpan nama kecamatan
+                                                }
+                                                $set('select_villages', null); // reset data desa
+                                            })
                                             ->required(false),
-                                        Forms\Components\Select::make('villages')
+                                        Forms\Components\Hidden::make('districts'), // hidden input kec
+                                        Forms\Components\Select::make('select_villages') // ambil id dan update nama lalu set ke input desa
                                             ->label('Desa')
-                                            // ->options(fn($get) => static::getVillages($get('districts')))
-                                            // ->live(onBlur: true)
-                                            // ->searchable()
-                                            // ->getSearchResultsUsing(fn(string $search, $get) => static::getVillages($get('districts'), $search))
+                                            ->options(fn(Get $get) => ApiService::getVillages($get('select_districts'))) // mengambil data api desa
+                                            ->live(onBlur: true)
+                                            ->searchable()
+                                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                                $villageData = ApiService::getVillages($get('select_districts'))[$state] ?? null;
+                                                if ($villageData) {
+                                                    $set('villages', $villageData); // Simpan nama desa
+                                                }
+                                            })
                                             ->required(false),
-                                        Forms\Components\TextInput::make('forest_name')
-                                            ->label('Nama Hutan')
-                                            ->maxLength(255),
-                                        Forms\Components\TextInput::make('surface_area')
-                                            ->label('Luas Hutan')
+                                        Forms\Components\Hidden::make('villages'), // hidden input desa
+                                        Forms\Components\TextInput::make('forest_name') // nama hutan
+                                            ->minLength(3)
+                                            ->maxLength(100)
+                                            ->label('Nama Hutan'),
+                                        TextInputSelectAffix::make('surface_area') // luas area hutan
+                                            ->label('Luas Area')
                                             ->numeric()
-                                            ->rules(['int']),
-                                        Forms\Components\Radio::make('method')
+                                            ->formatStateUsing(fn ($state) => $state = (float) $state)
+                                            ->select(
+                                                fn() => Forms\Components\Select::make('surface_area_unit') // select unit
+                                                    ->extraAttributes([
+                                                        'class' => 'w-[72px]' // lebar select unit
+                                                    ])
+                                                    ->default('m²') // nilai default
+                                                    ->options([
+                                                        'm²' => 'm²',
+                                                        'km²' => 'km²',
+                                                        'ha' => 'ha'
+                                                    ])
+                                            ),
+                                        Forms\Components\Radio::make('method') // pilihan metode
                                             ->label('Pilih Metode')
                                             ->options([
                                                 'sampling' => 'Sampling',
                                                 'sensus' => 'Sensus',
                                             ])
                                             ->live(debounce: 300),
-                                        Forms\Components\Repeater::make('meta')
-                                            ->hiddenLabel()
-                                            ->columnSpanFull()
-                                            ->addActionLabel('Tambah Data')
-                                            ->reorderableWithDragAndDrop(false)
-                                            ->defaultItems(0)
-                                            ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, callable $set, callable $get) {
-                                                // Pastikan state adalah array
-                                                // dd($data);
-                                                if (is_array($state)) {
-                                                    // Dapatkan array key numerik untuk mengakses item
-                                                    $keys = array_keys($state);
-                                                    foreach ($keys as $index => $key) {
-                                                        $set("meta.{$key}.plot", $index + 1);
-                                                    }
-                                                }
-                                            })
-                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                                // Jalankan setiap kali ada perubahan pada state repeater
-                                                if (is_array($state)) {
-                                                    $keys = array_keys($state);
-                                                    foreach ($keys as $index => $key) {
-                                                        $set("meta.{$key}.plot", $index + 1);
-                                                    }
-                                                }
-                                            })
-                                            ->collapsed()
-                                            ->schema([
-                                                Forms\Components\TextInput::make('plot')
-                                                    ->disabled(fn($get) => $get('../../method') == 'sampling' ? false : true)
-                                                    ->hidden(fn($get) => $get('../../method') == 'sampling' ? false : true),
-                                                Forms\Components\Repeater::make('plot_input')
-                                                    ->addActionLabel('Tambah Pohon')
-                                                    ->hiddenLabel()
-                                                    ->columnSpanFull()
-                                                    ->collapsed()
-                                                    ->schema([
-                                                        Forms\Components\TextInput::make('tree_name')
-                                                            ->label('Nama Pohon')
-                                                            ->live(onBlur: true)
-                                                            ->afterStateUpdated(function ($state, $set) {
-                                                                $data = static::getTaxaTree($state);
-                                                                $set('scientific_name', $data);
-                                                            })
-                                                            ->required(),
-                                                        Forms\Components\TextInput::make('scientific_name')
-                                                            ->label('Nama Ilmiah Pohon')
-                                                            ->disabled()
-                                                            ->dehydrated(),
-                                                        Forms\Components\TextInput::make('keliling'),
-                                                        Forms\Components\TextInput::make('diameter'),
+                                        static::getRepeaterSampling(),
+                                        static::getRepeaterSensus(),
+                                        // Forms\Components\Hidden::make('total_biomass'),
+                                        // Forms\Components\Hidden::make('total_carbon'),
 
-                                                    ]),
-                                            ]),
-                                    ])->columns(2)->maxWidth('md')
-                            ])->extraAttributes(['class' => 'flex justify-center'])
+                                    ])->columns(2)->maxWidth('md') // mengatur ukuran form dan input
+                            ])->extraAttributes(['class' => 'flex justify-center']) // mengatur posisi form
                     ])
             ]);
     }
 
+
+    // method table
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('climate_type'),
-                Tables\Columns\TextColumn::make('province')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('regency')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('subdistrict')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('village')
+                Tables\Columns\TextColumn::make('formula_type')
+                    ->label('Rumus')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('forest_name')
+                    ->label('Nama Hutan')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('surface_area')
+                    ->label('Luas Area')
+                    ->getStateUsing(fn($record) => $record->surface_area . ' ' . $record->surface_area_unit)
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('total_plot')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('total_biomass')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('total_carbon_stocks')
+                Tables\Columns\TextColumn::make('method')
+                    ->label('Metode Hitung')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Tanggal Dibuat')
+                    ->dateTime('d F Y')
+                    ->sortable(),
+                 
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->url(fn($record) => route('filament.admin.calculations.resources.climate-dries.view-result', ['record' => $record->id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -202,127 +207,25 @@ class ClimateDryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => InfoClimateDries::route('/'),
-            // 'index' => ListClimateDries::route('/'),
-            'create' => CreateClimateDry::route('/create'),
-            'edit' => EditClimateDry::route('/{record}/edit'),
+            'index' => InfoClimateDries::route('/'), // tampilan awal
+            'history' => ListClimateDries::route('/history'), // thalaman history
+            'brown-1997' => CreateBrown1997Dry::route('/brown-1997/create'), // halaman create/hitung
+            'view-result' => ViewClimateDry::route('/history/{record}'), // halaman hasil create/hitung
         ];
     }
 
     // Method Api Provinsi
-    public static function getProvinces($search = null)
-    {
-        // Menggunakan Http Client Laravel untuk mengambil data dari API
-        // Tambahkan parameter pencarian jika ada
-        $queryParams = [
-            'sortOrder' => 'asc',
-            'limit' => 7,   // Membatasi hanya 7 data yang ditampilkan awalnya
-            'sortBy' => 'code',
-        ];
-        // Jika ada input pencarian, tambahkan ke query
-        if ($search) {
-            $queryParams['name'] = $search;
-        }
-        // Lakukan request ke API
-        $response = Http::get('https://idn-area.up.railway.app/provinces', $queryParams);
-        // Cek apakah response berhasil
-        if ($response->successful()) {
-            return collect($response->json()['data'])
-                ->pluck('name', 'code');
-        }
-        return [];
-    }
 
-    //method api kabupaten
-    public static function getRegencies($provinceCode = null, $search = null)
-    {
-        // Menggunakan Http Client Laravel untuk mengambil data dari API
-        // Tambahkan parameter pencarian jika ada
-        $queryParams = [
-            'sortOrder' => 'asc',
-            'limit' => 7,   // Membatasi hanya 7 data yang ditampilkan awalnya
-            'sortBy' => 'code',
-        ];
-        // Jika ada input pencarian, tambahkan ke query
-        if ($provinceCode) {
-            $queryParams['provinceCode'] = $provinceCode;
-        }
-        if ($search) {
-            $queryParams['name'] = $search;
-        }
-        // Lakukan request ke API
-        $response = Http::get('https://idn-area.up.railway.app/regencies', $queryParams);
-        // Cek apakah response berhasil
-        if ($response->successful()) {
-            return collect($response->json()['data'])
-                ->pluck('name', 'code');
-        }
-        return [];
-    }
 
-    // Method Api Kec
-    public static function getDistricts($regencyCode = null, $search = null)
-    {
-        // Menggunakan Http Client Laravel untuk mengambil data dari API
-        // Tambahkan parameter pencarian jika ada
-        $queryParams = [
-            'sortOrder' => 'asc',
-            'limit' => 7,   // Membatasi hanya 7 data yang ditampilkan awalnya
-            'sortBy' => 'code',
-        ];
-        // Jika ada input pencarian, tambahkan ke query
-        if ($regencyCode) {
-            $queryParams['regencyCode'] = $regencyCode;
-        }
-        if ($search) {
-            $queryParams['name'] = $search;
-        }
-        // Lakukan request ke API
-        $response = Http::get('https://idn-area.up.railway.app/districts', $queryParams);
-        // Cek apakah response berhasil
-        if ($response->successful()) {
-            return collect($response->json()['data'])
-                ->pluck('name', 'code');
-        }
-        return [];
-    }
 
-    // Method Api Desa
-    public static function getVillages($districtCode = null, $search = null)
-    {
-        // Menggunakan Http Client Laravel untuk mengambil data dari API
-        // Tambahkan parameter pencarian jika ada
-        $queryParams = [
-            'sortOrder' => 'asc',
-            'limit' => 7,   // Membatasi hanya 7 data yang ditampilkan awalnya
-            'sortBy' => 'code',
-        ];
-        // Jika ada input pencarian, tambahkan ke query
-        if ($districtCode) {
-            $queryParams['districtCode'] = $districtCode;
-        }
-        if ($search) {
-            $queryParams['name'] = $search;
-        }
-        // Lakukan request ke API
-        $response = Http::get('https://idn-area.up.railway.app/villages', $queryParams);
-        // Cek apakah response berhasil
-        if ($response->successful()) {
-            return collect($response->json()['data'])
-                ->pluck('name', 'code');
-        }
-        return [];
-    }
 
-    // nama ilmiah pohon
+    // nama ilmiah pohon input
     // public static function getTaxaTree($search = null)
     // {
     //     // Menggunakan Http Client Laravel untuk mengambil data dari API
-    //     // Tambahkan parameter pencarian jika ada
     //     $queryParams = [
     //         'order' => 'asc',
     //         'order_by' => 'observations_count',
-    //         'rank' => 'species',   // Membatasi hanya data khusus untuk species saja yang ditampilkan
     //     ];
     //     if ($search) {
     //         $queryParams['q'] = $search;
@@ -332,50 +235,125 @@ class ClimateDryResource extends Resource
     //     // Cek apakah response berhasil
     //     if ($response->successful()) {
     //         $trees = $response->json('results');
-    //         $options = [];
+    //         $options = '';
 
     //         // Formatkan hasil untuk ditampilkan di frontend
     //         foreach ($trees as $tree) {
     //             if (isset($tree['name'])) {
-    //                 $options[] = $tree['name']; // Menyimpan nama umum pohon
+    //                 $options = $tree['name'] . ' (' . $tree['matched_term'] . ')'; // Menyimpan nama umum pohon
     //             }
     //         }
 
     //         return $options;
     //     }
 
-    //     return [];
+    //     return '';
     // }
-    // nama ilmiah pohon
-    public static function getTaxaTree($search = null)
+
+    public static function getRepeaterSensus(): Component
     {
-        // Menggunakan Http Client Laravel untuk mengambil data dari API
-        // Tambahkan parameter pencarian jika ada
-        $queryParams = [
-            'order' => 'asc',
-            'order_by' => 'observations_count',
-            'rank' => 'species',   // Membatasi hanya data khusus untuk species saja yang ditampilkan
-        ];
-        if ($search) {
-            $queryParams['q'] = $search;
-        }
-        // Lakukan request ke API
-        $response = Http::get('https://api.inaturalist.org/v1/taxa', $queryParams);
-        // Cek apakah response berhasil
-        if ($response->successful()) {
-            $trees = $response->json('results');
-            $options = '';
-
-            // Formatkan hasil untuk ditampilkan di frontend
-            foreach ($trees as $tree) {
-                if (isset($tree['name'])) {
-                    $options = $tree['name']; // Menyimpan nama umum pohon
+        return
+            Forms\Components\Repeater::make('meta_sensus') // meta json untuk menampung data hitung
+            ->hiddenLabel()
+            ->dehydrated(fn($get) => $get('method') === 'sensus')
+            ->visible(fn($get) => $get('method') === 'sensus') // show / !show
+            ->columnSpanFull()
+            ->addable(false)
+            ->collapsible(false)
+            ->addActionLabel('Tambah Data')
+            ->reorderableWithDragAndDrop(false) // menghilangkan fitur drag and drop
+            ->schema([
+                static::getSubRepeater(),
+            ]);
+    }
+    public static function getRepeaterSampling(): Component
+    {
+        return
+            Forms\Components\Repeater::make('meta_sampling') // meta json untuk menampung data hitung
+            ->hiddenLabel()
+            ->dehydrated(fn($get) => $get('method') === 'sampling')
+            ->visible(fn($get) => $get('method') === 'sampling') // show / !show
+            ->columnSpanFull()
+            ->collapsible()
+            ->addActionLabel('Tambah Data')
+            ->reorderableWithDragAndDrop(false) // menghilangkan fitur drag and drop
+            ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, Set $set) { // manipulasi data meta
+                // Pastikan state adalah array
+                if (is_array($state)) {
+                    $keys = array_keys($state);
+                    foreach ($keys as $index => $key) {
+                        $set("meta_sampling.{$key}.plot", $index + 1);
+                    }
                 }
-            }
+            })
+            ->afterStateUpdated(function ($state, Set $set) { // manupulasi data meta
+                // Jalankan setiap kali ada perubahan pada state repeater
+                if (is_array($state)) {
+                    $keys = array_keys($state);
+                    foreach ($keys as $index => $key) {
+                        $set("meta_sampling.{$key}.plot", $index + 1);
+                    }
+                }
+            })
+            ->schema([
+                Forms\Components\TextInput::make('plot'), // disabled bila bukan sampling
+                // Forms\Components\TextInput::make('plot_area')->suffix('m²'),
+                TextInputSelectAffix::make('plot_area') // keliling
+                    ->label('Luas Plot')
+                    ->numeric() // hanya untuk number
+                    ->formatStateUsing(fn ($state) => $state = (float) $state)
+                    ->select(
+                        fn() => Forms\Components\Select::make('plot_area_unit') // select unit
+                            ->extraAttributes([
+                                'class' => 'w-[72px]'
+                            ])
+                            ->default('m²') // nilai default
+                            ->options([
+                                'm²' => 'm²',
+                                'km²' => 'km²',
+                                'ha' => 'ha'
+                            ])
+                    ),
+                static::getSubRepeater(),
+            ]);
+    }
 
-            return $options;
-        }
+    public static function getSubRepeater(): Component
+    {
+        return Forms\Components\Repeater::make('input_calc')
+            ->addActionLabel('Tambah Pohon')
+            ->hiddenLabel()
+            ->columnSpanFull()
+            ->collapsed() // fitur dropdown
+            ->schema([
+                Forms\Components\TextInput::make('tree_name') // nama pohon
+                    ->label('Nama Pohon')
+                    ->live(onBlur: true)
+                    ->required(false),
 
-        return [];
+                Forms\Components\Select::make('scientific_name') // nama ilmiah pohon
+                    ->label('Nama Ilmiah Pohon')
+                    ->options(fn(Get $get) => ApiService::getTaxaTree($get('tree_name'))),
+                Forms\Components\TextInput::make('circumference') // keliling
+                    ->label('Keliling')
+                    ->numeric() // hanya untuk number
+                    ->formatStateUsing(fn ($state) => $state = (float) $state)
+                    ->live(debounce: 500) // keliling
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('diameter', round(((float)$state / 3.14), 2));
+                    })
+                    ->suffix('cm'),
+                Forms\Components\TextInput::make('diameter') // diameter
+                    ->label('Diameter')
+                    ->numeric()
+                    ->formatStateUsing(fn ($state) => $state = (float) $state)
+                    ->live(debounce: 500) // keliling
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('circumference', round((3.14 * (float)$state),2));
+                    })
+                    ->suffix('cm'),
+
+
+            ]);
     }
 }

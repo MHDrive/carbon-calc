@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,19 +14,22 @@ return new class extends Migration
     {
         Schema::create('calculations', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable(); // provinsi
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->enum('climate_type', ['dry', 'wet', 'moist'])->nullable(); // jenis iklim
-            $table->text('description')->nullable(); // provinsi
-            $table->string('province')->nullable(); // provinsi
-            $table->string('regency')->nullable(); // kabupaten
-            $table->string('subdistrict')->nullable(); // kecamatan
-            $table->string('village')->nullable(); // desa
+            $table->string('formula_type')->nullable(); // jenis iklim
+            $table->string('provinces')->nullable(); // provinsi
+            $table->string('regencies')->nullable(); // kabupaten
+            $table->string('districts')->nullable(); // kecamatan
+            $table->string('villages')->nullable(); // desa
             $table->string('forest_name')->nullable(); // nama hutan
             $table->string('surface_area')->nullable(); // luas area
-            $table->string('total_plot')->nullable(); // luas area
+            $table->string('surface_area_unit')->nullable(); // luas area perunit
+            $table->enum('method', ['sampling', 'sensus'])->nullable(); // luas area
             $table->json('meta')->nullable(); // data input
-            $table->string('total_biomass')->nullable(); // total biomassa
-            $table->string('total_carbon_stocks')->nullable(); // total cafangan karbon
+            $table->string('total_biomass_tonPerHa')->nullable(); // total biomassa
+            $table->string('total_carbon_stocks_tonPerHa')->nullable(); // total cafangan karbon
+            $table->string('total_biomass_kgPerHa')->nullable(); // total biomassa
+            $table->string('total_carbon_stocks_kgPerHa')->nullable(); // total cafangan karbon
             $table->timestamps();
         });
     }

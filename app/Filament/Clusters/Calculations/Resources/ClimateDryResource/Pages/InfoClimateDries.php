@@ -12,11 +12,8 @@ class InfoClimateDries extends ListRecords
 
     protected static string $view = 'filament.clusters.calculations.resources.climate-dry-resource.pages.info-climate-dry';
 
-    public $dryRecord;
-    public function mount(): void
+    public function getBreadcrumb(): ?string
     {
-        $this->dryRecord = static::getResource()::getEloquentQuery()->where('climate_type', 'dry')->get();
-        $this->authorizeAccess();
-        $this->loadDefaultActiveTab();
+        return static::$breadcrumb ?? 'Info';
     }
 }

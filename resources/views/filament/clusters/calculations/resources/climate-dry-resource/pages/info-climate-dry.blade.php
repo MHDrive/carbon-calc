@@ -36,7 +36,7 @@
 
             <div class="flex items-center justify-center">
                 {{-- @foreach ($dryRecord as $item) --}}
-                <a href="{{ route('filament.admin.calculations.resources.climate-dries.create') }}">
+                <a href="{{ route('filament.admin.calculations.resources.climate-dries.brown-1997') }}">
                     <div
                         class="w-28 h-28 bg-[#E6EAE5] flex flex-col justify-between shadow-sm rounded-lg ring-1 ring-gray-950/50 dark:bg-gray-900 dark:ring-white/10 p-2">
                         <div class="flex-1 flex items-center justify-center">

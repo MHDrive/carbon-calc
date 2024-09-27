@@ -6,14 +6,14 @@ use App\Filament\Clusters\Calculations\Resources\ClimateMoistResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListClimateMoists extends ListRecords
+class InfoClimateMoist extends ListRecords
 {
     protected static string $resource = ClimateMoistResource::class;
 
-    protected function getHeaderActions(): array
+    protected static string $view = 'filament.clusters.calculations.resources.climate-moist-resource.pages.info-climate-moist';
+
+    public function getBreadcrumb(): ?string
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return static::$breadcrumb ?? 'Info';
     }
 }
