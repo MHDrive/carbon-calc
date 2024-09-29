@@ -5,6 +5,7 @@ namespace App\Filament\Clusters\Calculations\Resources\ClimateWetResource\Pages;
 use Filament\Actions;
 use App\Enums\ClimateTypeEnum;
 use App\Enums\FormulaTypeEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Clusters\Calculations\Resources\ClimateWetResource;
@@ -98,6 +99,7 @@ class CreateBrown1997Wet extends CreateRecord
         $data['total_carbon_stocks_kgPerHa'] = $totalCarbonAllKgPerHa;
         $data['climate_type'] = ClimateTypeEnum::WET;
         $data['formula_type'] = FormulaTypeEnum::BROWN1997;
+        $data['user_id'] = Auth::user()->id;
 
         // Buat record baru
         $record = static::getModel()::create($data);

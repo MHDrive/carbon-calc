@@ -9,19 +9,21 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Enums\UserRoleEnum;
+use function Termwind\style;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Hash;
+use App\Filament\Exports\UserExporter;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\UserResource\RelationManagers;
 use League\CommonMark\Extension\Attributes\Node\Attributes;
-
-use function Termwind\style;
 
 class UserResource extends Resource
 {
@@ -63,6 +65,11 @@ class UserResource extends Resource
             ->header(view('filament.tables.header', [
                 'heading' => 'Data Pengguna'
             ]))
+            // ->headerActions([ hanya untuk testing
+            //     ExportAction::make()
+            //     ->label('Unduh CSV')
+            //         ->exporter(UserExporter::class)
+            // ])
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->rowIndex(),

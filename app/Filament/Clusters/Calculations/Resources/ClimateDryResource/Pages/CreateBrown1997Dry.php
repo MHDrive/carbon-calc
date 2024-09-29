@@ -5,6 +5,7 @@ namespace App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages;
 use Filament\Actions;
 use App\Enums\ClimateTypeEnum;
 use App\Enums\FormulaTypeEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Clusters\Calculations\Resources\ClimateDryResource;
@@ -98,6 +99,7 @@ class CreateBrown1997Dry extends CreateRecord
         $data['total_carbon_stocks_kgPerHa'] = $totalCarbonAllKgPerHa;
         $data['climate_type'] = ClimateTypeEnum::DRY;
         $data['formula_type'] = FormulaTypeEnum::BROWN1997;
+        $data['user_id'] = Auth::user()->id;
 
         // Buat record baru
         $record = static::getModel()::create($data);

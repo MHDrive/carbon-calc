@@ -8,11 +8,12 @@ use Filament\Widgets;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use Filament\PanelProvider;
+use Filament\FilamentManager;
+use Filament\Support\Assets\Css;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use App\Enums\StatusSubmissionEnum;
-use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\InfoClimateDries;
 use App\Filament\Pages\ProfileUser;
 use Filament\View\PanelsRenderHook;
 use App\Filament\Pages\Auth\MyLogin;
@@ -25,6 +26,8 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\View\TablesRenderHook;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use App\Filament\Resources\SubmissionResource;
 use Illuminate\Session\Middleware\StartSession;
@@ -33,10 +36,13 @@ use App\Filament\Pages\Auth\RequestPasswordReset;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages\InfoClimateDries;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -109,6 +115,14 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugins([
+                FilamentBackgroundsPlugin::make()
+                ->remember(900)
+                ->imageProvider(
+                    MyImages::make()
+                        ->directory('images/filament-background/')
+                ),
             ]);
     }
 

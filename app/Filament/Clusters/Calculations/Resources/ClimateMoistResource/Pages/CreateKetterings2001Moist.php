@@ -2,7 +2,6 @@
 
 namespace App\Filament\Clusters\Calculations\Resources\ClimateMoistResource\Pages;
 
-use App\Filament\Clusters\Calculations\Resources\ClimateMoistResource;
 use Filament\Forms;
 use Filament\Actions;
 use Filament\Forms\Get;
@@ -10,10 +9,12 @@ use Filament\Forms\Set;
 use App\Enums\ClimateTypeEnum;
 use App\Enums\FormulaTypeEnum;
 use App\Services\Classes\ApiService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
 use Filament\Resources\Pages\CreateRecord;
 use Marvinosswald\FilamentInputSelectAffix\TextInputSelectAffix;
+use App\Filament\Clusters\Calculations\Resources\ClimateMoistResource;
 
 class CreateKetterings2001Moist extends CreateRecord
 {
@@ -136,6 +137,7 @@ class CreateKetterings2001Moist extends CreateRecord
         $data['total_carbon_stocks_kgPerHa'] = $totalCarbonAllKgPerHa;
         $data['climate_type'] = ClimateTypeEnum::MOIST;
         $data['formula_type'] = FormulaTypeEnum::KETTERINGS2001;
+        $data['user_id'] = Auth::user()->id;
 
         // Buat record baru
         $record = static::getModel()::create($data);
