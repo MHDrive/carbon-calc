@@ -14,10 +14,7 @@ class SendSubmissionNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(array $details)
-{
-    $this->details = $details;
-}
+    public function __construct() {}
 
 
     /**
@@ -36,9 +33,9 @@ class SendSubmissionNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**

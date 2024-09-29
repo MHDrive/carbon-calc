@@ -9,6 +9,7 @@ use Filament\Forms\Set;
 use App\Enums\ClimateTypeEnum;
 use App\Enums\FormulaTypeEnum;
 use App\Services\Classes\ApiService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
 use Filament\Resources\Pages\CreateRecord;
@@ -136,7 +137,7 @@ class CreateBrown1995Moist extends CreateRecord
         $data['total_carbon_stocks_kgPerHa'] = $totalCarbonAllKgPerHa;
         $data['climate_type'] = ClimateTypeEnum::MOIST;
         $data['formula_type'] = FormulaTypeEnum::BROWN1995;
-
+        $data['user_id'] = Auth::user()->id;
         // Buat record baru
         $record = static::getModel()::create($data);
 

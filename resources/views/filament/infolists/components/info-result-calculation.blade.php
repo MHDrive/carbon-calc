@@ -1,5 +1,5 @@
 @php
-    // dd($data['meta']);
+    dd($data);
     $isSensus = $data['method'] === 'sensus';
     // konversi nilai luas hutan menjadi ha {
     if ($data['surface_area_unit'] === 'm²') {
@@ -64,13 +64,13 @@
         <!-- Menampilkan hasil total dalam div yang diinginkan -->
         <div class="flex flex-col pt-4">
             <span class="text-lg font-bold">Total Biomassa</span>
-            <p class="text-4xl"><span
+            <p class="text-4xl inline-flex"><span
                     class="text-primary-600">{{ number_format($data['total_biomass_tonPerHa'], 2) }}</span><strong>
-                    Ton/Ha</strong></p>
+                        &nbsp;Ton/Ha</strong></p>
             <span class="text-lg font-bold pt-4">Total Cadangan Karbon</span>
-            <p class="text-4xl"><span
+            <p class="text-4xl inline-flex"><span
                     class="text-primary-600">{{ number_format($data['total_carbon_stocks_tonPerHa'], 2) }}</span><strong>
-                    Ton/Ha</strong>
+                        &nbsp;Ton/Ha</strong>
             </p>
         </div>
         <hr class="border-2 my-4">
