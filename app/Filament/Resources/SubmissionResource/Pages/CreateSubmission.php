@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\Submission;
 use App\Enums\UserRoleEnum;
+use Filament\Actions\Action;
 use App\Mail\CreateSubmissionMail;
 use Filament\Forms\Components\View;
 use App\Livewire\TimelineSubmission;
@@ -19,10 +20,10 @@ use Filament\Forms\Components\Livewire;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\ViewField;
 use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\SubmissionResource;
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
+use Filament\Notifications\Actions\Action as NotifAction;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 
@@ -72,7 +73,7 @@ class CreateSubmission extends CreateRecord
             ->title('Pengajuan Berkas')
             ->body('Pengguna ' . $user->first_name . ' ' . $user->last_name . ' telah mengajukan berkas baru. Silakan klik lihat untuk melihat detail dan melakukan verifikasi.')
             ->actions([
-                Action::make('view')
+                NotifAction::make('view')
                     ->label('lihat')
                     ->url(route('filament.admin.resources.submissions.view', ['record' => $this->newData->id]))
                     ->button()
@@ -89,12 +90,18 @@ class CreateSubmission extends CreateRecord
             'subject' => 'Pengajuan_Berkas_' . $user->first_name . '_' . $user->last_name,
             'body' => 'Kami telah menerima kiriman baru dari pengguna ' . $user->first_name . ' ' . $user->last_name . '.',
             'body2' => 'Jika Anda ingin melihat detailnya, klik tombol di bawah ini untuk masuk ke sistem:',
-            'url' => '/admin/submissions/'. $submission->id,
+            'url' => '/admin/submissions/' . $submission->id,
             'title' => 'Pengajuan Baru',
         ];
 
         // Kirim email
         Mail::to($admin->email)
             ->send(new CreateSubmissionMail($messages, $submission));
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return Action::make('createAnother')
+            ->hidden(true);
     }
 }

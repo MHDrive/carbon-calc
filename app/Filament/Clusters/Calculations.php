@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Illuminate\Support\Facades\Auth;
 use Filament\Pages\SubNavigationPosition;
 
 class Calculations extends Cluster
@@ -21,4 +22,18 @@ class Calculations extends Cluster
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+
+    public static function canAccessClusteredComponents(): bool
+    {
+        $user = Auth::user();
+        foreach (static::getClusteredComponents() as $component) {
+            if ($component::canAccess() && $user->isGuest()) {
+                if($user->access_calc){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
