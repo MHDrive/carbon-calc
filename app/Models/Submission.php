@@ -14,7 +14,7 @@ class Submission extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['user_id', 'notes', 'status', 'is_active'];
+    protected $fillable = ['user_id', 'notes', 'status', 'is_active', 'granted_at', 'expires_at'];
 
     // protected $with = ['user', 'media'];
 
@@ -36,8 +36,8 @@ class Submission extends Model implements HasMedia
     public function scopeRouteGuest($query)
     {
         return $query->where(function ($query) {
-            $query->where('status', StatusSubmissionEnum::PENDING->value)
-                ->orWhere('status', StatusSubmissionEnum::APPROVED->value);
+            $query->where('status', StatusSubmissionEnum::PENDING)
+                ->orWhere('status', StatusSubmissionEnum::APPROVED);
         })->where('is_active', true);
     }
 }

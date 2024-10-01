@@ -68,6 +68,7 @@ class SubmissionResource extends Resource
                                         ->default(Auth::id())
                                 ]),
                                 SpatieMediaLibraryFileUpload::make('file_submission')
+                                    ->label('Upload File')
                                     // ->hiddenLabel()
                                     ->collection('file_submissions'),
                                 Forms\Components\Group::make()
@@ -122,7 +123,7 @@ class SubmissionResource extends Resource
             ])
             ->recordUrl(false)
             ->actions([
-                Tables\Actions\ViewAction::make()->label('Verifikasi')->color('info')->hidden(fn($record) =>  $record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED)
+                Tables\Actions\ViewAction::make()->label(fn($record) =>  ($record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED) ? 'Detail' : 'Verifikasi')->color('info')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

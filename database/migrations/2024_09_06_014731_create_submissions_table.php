@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class);
             $table->text('notes')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->timestamp('granted_at')->nullable(); // Tanggal izin diberikan
+            $table->timestamp('expires_at')->nullable(); // Tanggal izin berakhir
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
