@@ -14,25 +14,4 @@ class Dashboard extends BaseDashboard
     // protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     // protected static string $view = 'filament.pages.dashboard';
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('action')
-                ->label('Update')
-                ->form([
-                    TextInput::make('name')
-                        ->required()
-                        ->autofocus(),
-                ])
-                ->action(function () {
-                    $user = User::find(2);
-                    Notification::make()
-                        ->title('Saved successfully')
-                        ->sendToDatabase($user);
-
-                    event(new DatabaseNotificationsSent($user));
-                })
-        ];
-    }
 }

@@ -15,6 +15,7 @@
         "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.9",
         "marvinosswald/filament-input-select-affix": "^0.2.0",
+        "owenvoke/blade-fontawesome": "^2.6",
         "plank/laravel-metable": "^6.0",
         "swisnl/filament-backgrounds": "^1.1"
     },
