@@ -1,5 +1,5 @@
 @php
-    dd($data);
+    // dd($data);
     $isSensus = $data['method'] === 'sensus';
     // konversi nilai luas hutan menjadi ha {
     if ($data['surface_area_unit'] === 'm²') {

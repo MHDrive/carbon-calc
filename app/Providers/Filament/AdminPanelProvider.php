@@ -21,6 +21,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Components\Section;
 use App\Filament\Pages\Auth\MyRegister;
+use App\Filament\Widgets\AccountWidget;
 use Filament\Navigation\NavigationItem;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentIcon;
@@ -98,10 +99,6 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
