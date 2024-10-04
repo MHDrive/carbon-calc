@@ -60,7 +60,7 @@ div header.fi-sidebar-header {
 
 /* sidebar page clusters */
 .fi-page-sub-navigation-sidebar .fi-sidebar-group {
-    @apply !bg-white shadow-sm rounded-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-2
+    @apply bg-white shadow-xl rounded-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-2
 }
 
 

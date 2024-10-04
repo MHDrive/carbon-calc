@@ -33,17 +33,17 @@
         <h1 class="text-2xl mb-4"><strong>Total Keseluruhan (Grand Total)</strong></h1>
         <div class="text-sm">
             <div class="flex items-center space-x-2 pl-5">
-                <span class="w-32 text-gray-600/50">Hutan</span>
+                <span class="w-32 text-gray-600/50 dark:text-gray-400">Hutan</span>
                 <span>:</span>
                 <span>{{ $data['forest_name'] }}</span>
             </div>
             <div class="pl-5 flex items-center space-x-2">
-                <span class="w-32 text-gray-600/50">Luas Hutan</span>
+                <span class="w-32 text-gray-600/50 dark:text-gray-400">Luas Hutan</span>
                 <span>:</span>
                 <span>{{ $surface_area . ' ha' }}</span>
             </div>
             <div class="pl-5 flex items-center space-x-2">
-                <span class="w-32 text-gray-600/50">Lokasi Hutan</span>
+                <span class="w-32 text-gray-600/50 dark:text-gray-400">Lokasi Hutan</span>
                 <span>:</span>
                 <span>
                     {{ ucwords(strtolower($data['villages'])) . // mengubah niai string agar khusus kalimat awal menjadi kapital
@@ -56,7 +56,7 @@
                 </span>
             </div>
             <div class="pl-5 flex items-center space-x-2">
-                <span class="w-32 text-gray-600/50">Tanggal</span>
+                <span class="w-32 text-gray-600/50 dark:text-gray-400">Tanggal</span>
                 <span>:</span>
                 <span>{{ \Carbon\Carbon::parse($data['created_at'])->translatedFormat('l, d M Y') }}</span>
             </div>

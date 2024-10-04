@@ -3,24 +3,29 @@
 @endphp
 
 <x-filament-widgets::widget class="fi-account-widget">
-    <x-filament::section class="shadow-xl" > 
+    <x-filament::section class="shadow-xl">
         <div class="flex items-center gap-x-3">
 
             <div class="flex-1 space-y-8"> <!-- Menambahkan space-y-2 untuk jarak -->
-                <h2
-                    class="flex text-xl flex-1 font-semibold leading-6 text-gray-950 dark:text-white"
-                >
+                <h2 class="flex text-xl flex-1 font-semibold leading-6 text-gray-950 dark:text-white">
                     <span class="text-blue-600">Selamat Datang</span>
-                    <x-fas-smile-beam class="ml-2 w-6 text-yellow-400" />
+                    <img src="{{ asset('images/icon/smiley-icon.svg') }}" class="ml-2 w-5 h-5" alt="">
                 </h2>
-            
+
                 <p class="text-5xl font-semibold text-gray-500 dark:text-gray-400">
-                    {{ filament()->getUserName($user) }}
+                    @if (auth()->user()->isAdmin())
+                        Administrator
+                    @else
+                        {{ filament()->getUserName($user) }}
+                    @endif
                 </p>
             </div>
-            
 
-            <img src="{{ asset('images/icon/icon-dashbord-user.png') }}" alt="">
+            @if (auth()->user()->isAdmin())
+                <img src="{{ asset('images/icon/icon-dashboard-admin.png') }}" alt="">
+            @else
+                <img src="{{ asset('images/icon/icon-dashboard-user.png') }}" alt="">
+            @endif
             {{-- <form
                 action="{{ filament()->getLogoutUrl() }}"
                 method="post"

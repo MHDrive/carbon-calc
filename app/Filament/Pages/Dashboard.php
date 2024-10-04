@@ -16,6 +16,7 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends BaseDashboard
 {
@@ -27,34 +28,37 @@ class Dashboard extends BaseDashboard
 
     public function filtersForm(Form $form): Form
     {
-        return $form
-            ->schema([
-                Section::make()
-                    ->schema([
-                        Select::make('climate_type')
-                            // ->native(false)
-                            ->label('Iklim')
-                            ->live(debounce:500)
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                $set('formula_type', null);
-                                $set('method', null);
-                            })
-                            ->options(ClimateTypeEnum::class),
-                        Select::make('formula_type')
-                            // ->native(false)
-                            ->label('Rumus')
-                            ->disabled(fn (Get $get) => !$get('climate_type'))
-                            ->options(FormulaTypeEnum::class),
-                        Select::make('method')
-                            // ->native(false)
-                            ->label('Metode')
-                            ->disabled(fn (Get $get) => !$get('climate_type'))
-                            ->options([
-                                'sensus' => 'Sensus',
-                                'sampling' => 'Sampling',
-                            ]),
-                    ])
-                    ->columns(3),
-            ]);
+        if (Auth::user()->isGuest()) {
+            $form
+                ->schema([
+                    Section::make()
+                        ->schema([
+                            Select::make('climate_type')
+                                // ->native(false)
+                                ->label('Iklim')
+                                ->live(debounce: 500)
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $set('formula_type', null);
+                                    $set('method', null);
+                                })
+                                ->options(ClimateTypeEnum::class),
+                            Select::make('formula_type')
+                                // ->native(false)
+                                ->label('Rumus')
+                                ->disabled(fn(Get $get) => !$get('climate_type'))
+                                ->options(FormulaTypeEnum::class),
+                            Select::make('method')
+                                // ->native(false)
+                                ->label('Metode')
+                                ->disabled(fn(Get $get) => !$get('climate_type'))
+                                ->options([
+                                    'sensus' => 'Sensus',
+                                    'sampling' => 'Sampling',
+                                ]),
+                        ])
+                        ->columns(3),
+                ]);
+        }
+        return $form;
     }
 }
