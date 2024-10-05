@@ -178,7 +178,8 @@ class RecapitulationResource extends Resource
                     ])
             ])
             ->actions([
-                Tables\Actions\Action::make('Details'),
+                Tables\Actions\Action::make('Details')
+                ->url(fn ($record) => route('filament.admin.resources.recapitulations.view', ['record' => $record->id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -199,7 +200,7 @@ class RecapitulationResource extends Resource
         return [
             'index' => Pages\ListRecapitulations::route('/'),
             'create' => Pages\CreateRecapitulation::route('/create'),
-            'edit' => Pages\EditRecapitulation::route('/{record}/edit'),
+            'view' => Pages\viewRecapitulation::route('/{record}/view'),
         ];
     }
 }
