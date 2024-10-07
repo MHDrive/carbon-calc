@@ -40,7 +40,7 @@ class SubmissionResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-panels::resources/global-resource.plural-model-label.submission-model.submissions');
+        return 'Verifikasi Pengajuan';
     }
 
     public static function form(Form $form): Form
@@ -81,9 +81,7 @@ class SubmissionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->header(view('filament.tables.header', [
-                'heading' => 'Data Pengajuan'
-            ]))
+            ->heading('Data Pengajuan')
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')
                     ->label('Nama Lengkap')
@@ -123,7 +121,7 @@ class SubmissionResource extends Resource
             ])
             ->recordUrl(false)
             ->actions([
-                Tables\Actions\ViewAction::make()->label(fn($record) =>  ($record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED) ? 'Detail' : 'Verifikasi')->color('info')
+                Tables\Actions\ViewAction::make()->label(fn($record) => ($record->status === StatusSubmissionEnum::APPROVED || $record->status === StatusSubmissionEnum::REJECTED) ? 'Detail' : 'Verifikasi')->color('info')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -181,8 +179,21 @@ class SubmissionResource extends Resource
                         ->label('No HP')
                         ->required(),
                 ]),
-            Forms\Components\TextInput::make('media.created_at')
+            Forms\Components\DatePicker::make('media.created_at')
                 ->label('Tanggal Upload')
+                ->formatStateUsing(function ($record) {
+                    $mediaItem = $record->media->first();
+
+                    if ($mediaItem && $mediaItem->created_at) {
+                        // Pastikan mengembalikan format yang valid untuk DatePicker
+                        return $mediaItem->created_at->format('Y-m-d');
+                    }
+
+                    return null; // Atur null jika tidak ada data tanggal
+                })
+                ->displayFormat('d F Y') // Contoh: "07 October 2024"
+                ->timezone('Asia/Jakarta')
+
 
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Enums\ClimateTypeEnum;
@@ -11,10 +12,14 @@ use App\Enums\FormulaTypeEnum;
 use App\Models\Recapitulation;
 use Filament\Resources\Resource;
 use Filament\Tables\Grouping\Group;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RecapitulationExport;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Exports\RecapitulationExporter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\RecapitulationResource\Pages;
@@ -25,6 +30,8 @@ class RecapitulationResource extends Resource
     protected static ?string $model = Recapitulation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $pluralModelLabel = 'Rekapitulasi';
 
     public static function form(Form $form): Form
     {
@@ -66,6 +73,7 @@ class RecapitulationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->heading('Hasil Perhitungan Cadangan Carbon')
             ->query(fn(): Builder => static::getModel()::query()->where('user_id', Auth::user()->id))
             ->groups([
                 Group::make('climate_type')
@@ -179,11 +187,98 @@ class RecapitulationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('Details')
-                ->url(fn ($record) => route('filament.admin.resources.recapitulations.view', ['record' => $record->id])),
+                    ->url(fn($record) => route('filament.admin.resources.recapitulations.view', ['record' => $record->id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('export')
+                    ->icon('heroicon-o-user')
+                    ->color('success')
+                    ->form([
+                        Forms\Components\Radio::make('check')
+                            ->label('Centang Semua?')
+                            ->boolean()
+                            ->inline()
+                            ->live(debounce: 500)
+                            ->afterStateUpdated(function ($state, $set) {
+                                if($state){
+                                    // dd('oke');
+                                    $set('no', true);
+                                    $set('id', true);
+                                    $set('climate_type', true);
+                                    $set('formula_type', true);
+                                    $set('address', true);
+                                    $set('forest_name', true);
+                                    $set('surface_area', true);
+                                    $set('method', true);
+                                    $set('meta', true);
+                                    $set('total_biomass_tonPerHa', true);
+                                    $set('total_carbon_stocks_tonPerHa', true);
+                                    $set('total_biomass_kgPerHa', true);
+                                    $set('total_carbon_stocks_kgPerHa', true);
+                                }else{
+                                    $set('no', null);
+                                    $set('id', null);
+                                    $set('climate_type', null);
+                                    $set('formula_type', null);
+                                    $set('address', null);
+                                    $set('forest_name', null);
+                                    $set('surface_area', null);
+                                    $set('method', null);
+                                    $set('meta', null);
+                                    $set('total_biomass_tonPerHa', null);
+                                    $set('total_carbon_stocks_tonPerHa', null);
+                                    $set('total_biomass_kgPerHa', null);
+                                    $set('total_carbon_stocks_kgPerHa', null);
+                                }
+                            })
+                            ->inlineLabel(false),
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\Checkbox::make('no')
+                                    ->default(true)
+                                    ->label('No'),
+                                Forms\Components\Checkbox::make('id')
+                                    ->label('ID'),
+                                Forms\Components\Checkbox::make('climate_type')
+                                    ->label('Iklim'),
+                                Forms\Components\Checkbox::make('formula_type')
+                                    ->label('Rumus'),
+                                Forms\Components\Checkbox::make('address')
+                                    ->live(debounce: 500)
+                                    ->label('Alamat'),
+                                    Forms\Components\Fieldset::make('Alamat')
+                                    ->hidden(fn(Get $get) => !$get('address'))
+                                    ->schema([
+                                        Forms\Components\Radio::make('condition_address')
+                                            ->hiddenLabel()
+                                            ->default('satuCell')
+                                            ->options([
+                                                'satuCell' => 'Satu Cell',
+                                                'perCell' => 'Per Cell',
+                                            ]),
+                                    ])->columnSpan(1),
+                                Forms\Components\Checkbox::make('forest_name')
+                                    ->label('Nama Hutan'),
+                                Forms\Components\Checkbox::make('surface_area')
+                                    ->label('Luas Area'),
+                                Forms\Components\Checkbox::make('method')
+                                    ->label('Metode'),
+                                Forms\Components\Checkbox::make('meta')
+                                    ->label('Data Meta'),
+                                Forms\Components\Checkbox::make('total_biomass_tonPerHa')
+                                    ->label('Total Biomass Ton/Ha'),
+                                Forms\Components\Checkbox::make('total_carbon_stocks_tonPerHa')
+                                    ->label('Total Cadangan Carbon Ton/Ha'),
+                                Forms\Components\Checkbox::make('total_biomass_kgPerHa')
+                                    ->label('Total Biomass Kg/Ha'),
+                                Forms\Components\Checkbox::make('total_carbon_stocks_kgPerHa')
+                                    ->label('Total Cadangan Carbon Ton/Ha'),
+                            ])
+                    ])
+                    ->modalWidth(MaxWidth::Small)
+                    ->action(fn (Collection $records, array $data) => Excel::download(new RecapitulationExport($data, $records), 'invoices.csv', \Maatwebsite\Excel\Excel::XLSX))
                 ]),
             ]);
     }
@@ -199,7 +294,6 @@ class RecapitulationResource extends Resource
     {
         return [
             'index' => Pages\ListRecapitulations::route('/'),
-            'create' => Pages\CreateRecapitulation::route('/create'),
             'view' => Pages\viewRecapitulation::route('/{record}/view'),
         ];
     }

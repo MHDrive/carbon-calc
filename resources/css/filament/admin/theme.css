@@ -21,12 +21,12 @@ body {
     @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900
 }
 
-/* topbar */
+/* custom topbar */
 .fi-topbar {
-    @apply mt-6 ml-8 shadow-[0_4px_10px_rgba(0,0,0,0.25)];
+    @apply mt-6 mx-8 shadow-[0_4px_10px_rgba(0,0,0,0.25)];
 }
 
-/* sidebar header khusus di header */
+/* custom sidebar header khusus di header */
 div header.fi-sidebar-header {
     @apply !bg-[#15181B] shadow-xl dark:!bg-gray-900;
  }
@@ -38,7 +38,7 @@ div header.fi-sidebar-header {
 
  /* siderbar header */
  .fi-sidebar-header {
-    @apply pt-6 h-24;
+    @apply pt-5 h-24;
  }
  /* .fi-sidebar-nav-groups {
     @apply pt-5
@@ -51,12 +51,12 @@ div header.fi-sidebar-header {
  }
 
 .color-primary {
-    @apply bg-[#5bc1468a]
+    @apply bg-primary-400
 }
  /* tampilan header section form */
-.section-change-password .fi-section-header { @apply bg-primary-300 dark:bg-primary-500 rounded-t-lg }
+.section-change-color .fi-section-header { @apply bg-primary-600/50 dark:bg-primary-500 rounded-t-lg }
 
-.section-change-password .fi-section-header .fi-section-header-heading { @apply text-black }
+.section-change-color .fi-section-header .fi-section-header-heading { @apply text-black }
 
 /* sidebar page clusters */
 .fi-page-sub-navigation-sidebar .fi-sidebar-group {
@@ -84,3 +84,13 @@ div.fi-ta-content table thead tr th.change > span {
     /* Gaya CSS yang ingin diterapkan */
     @apply flex w-full items-center gap-x-1 whitespace-normal justify-start;
 }
+
+/* table heading color custom */
+.fi-ta-header {
+    @apply bg-primary-600/50 dark:bg-primary-500 text-base font-semibold flex flex-col gap-3 p-4 sm:px-6 sm:flex-row sm:items-center
+}
+/* table thead color custom */
+div.fi-ta-content table thead > tr {
+    @apply bg-primary-600/65 dark:divide-white/5
+}
+

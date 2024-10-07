@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Flowframe\Trend\Trend;
 use App\Enums\UserRoleEnum;
 use App\Models\Calculation;
+use App\Models\Recapitulation;
 use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class CustomChart extends ChartWidget
         $formula_type = $this->filters['formula_type'] ?? null;
         $method = $this->filters['method'] ?? null;
 
-        $data = Trend::query(Calculation::query()->when($climate_type, function ($query) use ($climate_type) {
+        $data = Trend::query(Recapitulation::query()->where('user_id', Auth::user()->id)->when($climate_type, function ($query) use ($climate_type) {
             return $query->where('climate_type', $climate_type);
         })
             ->when($formula_type, function ($query) use ($formula_type) {

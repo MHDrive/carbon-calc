@@ -22,6 +22,8 @@ class CreateKetterings2001Moist extends CreateRecord
 
     public $newData;
 
+    protected static ?string $title = 'Kalkulator Ketterings2001';
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'Ketterings-2001';

@@ -23,6 +23,8 @@ class ViewClimateDry extends ViewRecord
     // use InteractsWithTable;
     protected static string $resource = ClimateDryResource::class;
 
+    protected static ?string $title = 'Hasil Kalkulator';
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'hasil';

@@ -31,16 +31,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('filament-panels::resources/global-resource.navigation.group.master_data');
-    }
-
-    // protected static ?string $pluralModelLabel = 'Pengguna';
-    public static function getPluralModelLabel(): string
-    {
-        return __('filament-panels::resources/global-resource.plural-model-label.user-model.users');
-    }
+    protected static ?string $pluralModelLabel = 'Pengguna';
 
     public static function form(Form $form): Form
     {
@@ -62,9 +53,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->header(view('filament.tables.header', [
-                'heading' => 'Data Pengguna'
-            ]))
+            ->heading('Data Pengguna')
             // ->headerActions([ hanya untuk testing
             //     ExportAction::make()
             //     ->label('Unduh CSV')
@@ -90,7 +79,7 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                 
+
             ])
             ->filters([
                 //
@@ -199,32 +188,9 @@ class UserResource extends Resource
                 ->label('Instansi/Institusi')
                 ->relationship('institutes', 'name')
                 ->createOptionForm([
-                    Forms\Components\Select::make('type')
-                        ->label('Jenis')
-                        ->options([
-                            'institusi' => 'INSTANSI',
-                            'instansi' => 'INSTITUSI',
-                        ])
-                        ->required(),
                     Forms\Components\TextInput::make('name')
                         ->label('Nama')
                         ->required(),
-                    Forms\Components\TextInput::make('address')
-                        ->label('Alamat')
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('city')
-                        ->label('Kota')
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('phone_number')
-                        ->label('Nomor Telepon')
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('email')
-                        ->label('Email')
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('description')
-                        ->label('Deskripsi')
-                        ->maxLength(255),
                 ]),
             Forms\Components\TextInput::make('phone_number')
                 ->label('Nomor HP')

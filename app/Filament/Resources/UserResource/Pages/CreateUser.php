@@ -15,6 +15,8 @@ class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
+    protected static ?string $title = 'Buat Pengguna';
+
     public function form(Form $form): Form
     {
         return parent::form($form)

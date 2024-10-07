@@ -36,7 +36,9 @@ class ClimateDryResource extends Resource
     protected static ?string $model = ClimateDry::class;
 
     // icon
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack'; // icon navigation
+
+    protected static ?string $pluralModelLabel = 'Iklim Kering'; // plural label
 
     // position navigation sub sidebar
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;

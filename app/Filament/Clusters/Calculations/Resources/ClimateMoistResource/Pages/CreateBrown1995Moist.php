@@ -22,6 +22,8 @@ class CreateBrown1995Moist extends CreateRecord
 
     public $newData;
 
+    protected static ?string $title = 'Kalkulator Brown1995';
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'Brown-1995';

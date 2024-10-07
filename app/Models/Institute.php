@@ -11,12 +11,6 @@ class Institute extends Model
 
     protected $fillable = [
         'name',
-        'address',
-        'city',
-        'phone_number',
-        'type',
-        'email',
-        'description',
     ];
 
     public function users(): \Illuminate\Database\Eloquent\Relations\HasMany

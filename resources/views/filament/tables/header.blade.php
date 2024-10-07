@@ -1,1 +1,0 @@
-<div class="bg-[#5bc1468a] text-base font-semibold  flex flex-col gap-3 p-4 sm:px-6 sm:flex-row sm:items-center">{{ $heading }}</div>

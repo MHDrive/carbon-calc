@@ -15,6 +15,13 @@ class ViewSubmissionGuest extends ViewRecord
 {
     protected static string $resource = SubmissionResource::class;
 
+    protected static ?string $title = 'Pengajuan Berkas';
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     protected function authorizeAccess(): void
     {
         $user = Auth::user(); // Dapatkan user yang sedang login

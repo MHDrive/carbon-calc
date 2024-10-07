@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             'panels::sidebar.expand-button' => 'heroicon-o-bars-3',
         ]);
         Section::configureUsing(function (Section $section): void {
-            $section->extraAttributes(['class' => 'section-change-password']);
+            $section->extraAttributes(['class' => 'section-change-color']);
         });
     }
     public function panel(Panel $panel): Panel
@@ -64,20 +64,22 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->spa()
+            // ->breadcrumbs(false)
             ->databaseNotifications()
             ->databaseNotificationsPolling(null)
-            ->renderHook(
-                'panels::sidebar.nav',
-                function ($item) {
-                    if (! $item->isActive()) {
-                        return [
-                            'attributes' => [
-                                'class' => 'text-[#66799E]',
-                            ],
-                        ];
-                    }
-                }
-            )
+            // ->renderHook(
+            //     'panels::sidebar.nav',
+            //     function ($item) {
+            //         if (! $item->isActive()) {
+            //             return [
+            //                 'attributes' => [
+            //                     // 'class' => 'text-[#66799E]',
+            //                     'class' => 'text-red',
+            //                 ],
+            //             ];
+            //         }
+            //     }
+            // )
             ->navigationItems(static::getNavigationItems())
             // ->unsavedChangesAlerts()
             ->login(MyLogin::class)

@@ -22,15 +22,17 @@ class RecapitulationExport implements FromView, ShouldAutoSize
     // use Exportable;
 
     protected $column;
+    protected $record;
     
-    public function __construct($column)
+    public function __construct($column, $record)
     {
         $this->column = $column;
+        $this->record = $record;
     }
     public function view(): View
     {
         return view('exports.recapitulation-export', [
-            'record' => Recapitulation::all(),
+            'record' => $this->record,
             'columns' => $this->column,
         ]);
     }

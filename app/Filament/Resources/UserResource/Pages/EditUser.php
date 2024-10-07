@@ -6,10 +6,13 @@ use Filament\Actions;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
+
+    protected static ?string $title = 'Ubah Pengguna';
 
     // button delete halaman edit
     protected function getHeaderActions(): array
