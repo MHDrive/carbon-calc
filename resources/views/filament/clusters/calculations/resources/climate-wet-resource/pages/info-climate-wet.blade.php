@@ -19,7 +19,7 @@
                     <strong class="text-sm">
                         > 4000 </strong> <br>
                             <p class="text-xs text-primary-600 font-bold mt-2">Iklim Basah</p> <br>
-                            <img src="{{ asset('/storage/images/wet.png') }}" alt="">
+                            <img src="{{ asset('images/icon/wet.png') }}" alt="">
                 </div>
                 <div>
                     <p class="font-semibold text-sm">{{ $climateDescription }}</p>

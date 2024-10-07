@@ -21,7 +21,7 @@
                     <strong class="text-sm">
                         < 1500 </strong> <br>
                             <p class="text-xs text-primary-600 font-bold mt-2">Iklim Kering</p> <br>
-                            <img src="{{ asset('/storage/images/dry.png') }}" alt="">
+                            <img src="{{ asset('images/icon/dry.png') }}" alt="">
                 </div>
                 <div>
                     <p class="font-semibold text-sm">{{ $climateDescription }}</p>
