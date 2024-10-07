@@ -107,7 +107,8 @@ class DatabaseSeeder extends Seeder
         // }
 
         $admin = User::factory()->create([
-            'email' => 'myakunreal360@gmail.com',
+            // 'email' => 'myakunreal360@gmail.com',
+            'email' => 'admin@example.com',
             'roles' => UserRoleEnum::ADMIN
         ]);
 
@@ -115,7 +116,7 @@ class DatabaseSeeder extends Seeder
 
 
         $guest = User::factory()->create([
-            'email' => 'hamdj360@gmail.com',
+            'email' => 'guest@example.com',
             'roles' => UserRoleEnum::GUEST
         ]);
 
