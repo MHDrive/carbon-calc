@@ -35,56 +35,20 @@ class InstituteResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('type')
-                    ->label('Jenis')
-                    ->options([
-                        'institusi' => 'INSTANSI',
-                        'instansi' => 'INSTITUSI',
-                    ])
-                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama')
                     ->required(),
-                Forms\Components\TextInput::make('address')
-                    ->label('Alamat')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('city')
-                    ->label('Kota')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone_number')
-                    ->label('Nomor Telepon')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->label('Deskripsi')
-                    ->maxLength(255),
-                // Forms\Components\Select::make('status')
-                //     ->options(StatusInstituteEnum::options())
-                //     ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->header(view('filament.tables.header', [
-                'heading' => 'Data Instansi / Institusi'
-            ]))
+            ->heading('Data Instansi / Institusi')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Jenis')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                 
+                    ->searchable(),                 
             ])
             ->filters([
                 //

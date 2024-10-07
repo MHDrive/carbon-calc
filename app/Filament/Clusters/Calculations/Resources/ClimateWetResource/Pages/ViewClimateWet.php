@@ -13,6 +13,8 @@ class ViewClimateWet extends ViewRecord
 {
     protected static string $resource = ClimateWetResource::class;
 
+    protected static ?string $title = 'Hasil Kalkulator';
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'hasil';

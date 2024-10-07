@@ -6,6 +6,7 @@ use App\Enums\StatusSubmissionEnum;
 use App\Models\User;
 use App\Models\Submission;
 use App\Models\Calculation;
+use App\Models\Recapitulation;
 use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -23,7 +24,7 @@ class StatsOverviewWidget extends BaseWidget
             $formula_type = $this->filters['formula_type'] ?? null;
             $method = $this->filters['method'] ?? null;
 
-            $record = Calculation::query()->when($climate_type, function ($query) use ($climate_type) {
+            $record = Recapitulation::query()->where('user_id', Auth::user()->id)->when($climate_type, function ($query) use ($climate_type) {
                 return $query->where('climate_type', $climate_type);
             })
                 ->when($formula_type, function ($query) use ($formula_type) {
@@ -86,10 +87,10 @@ class StatsOverviewWidget extends BaseWidget
             return [
                 Stat::make('Pengguna', $pengguna),
                 Stat::make('Pengajuan', $pengajuan),
-                Stat::make('File Belum Diproses', $fileBelumDiproses),
-                Stat::make('File Yang Sudah Diproses', $fileSudahDiproses),
-                Stat::make('File Yang Diterima', $fileDiterima),
-                Stat::make('File Yang Ditolak', $fileDitolak),
+                Stat::make('File Belum Diproses', $fileBelumDiproses ?? 0),
+                Stat::make('File Yang Sudah Diproses', $fileSudahDiproses ?? 0),
+                Stat::make('File Yang Diterima', $fileDiterima ?? 0),
+                Stat::make('File Yang Ditolak', $fileDitolak ?? 0),
             ];
         }
     }

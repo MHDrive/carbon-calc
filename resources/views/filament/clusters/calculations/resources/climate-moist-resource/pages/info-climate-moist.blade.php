@@ -7,7 +7,7 @@
 ])>
     <div class="flex flex-col gap-y-6">
         <x-filament-panels::resources.tabs />
-        <x-filament::section class="section-change-password">
+        <x-filament::section class="section-change-color">
             <x-slot name="heading">
                 Kategori Iklim
             </x-slot>
@@ -27,7 +27,7 @@
             </div>
 
         </x-filament::section>
-        <x-filament::section class="section-change-password">
+        <x-filament::section class="section-change-color">
             <x-slot name="heading">
                 Kategori Rumus
             </x-slot>

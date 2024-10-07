@@ -20,6 +20,14 @@ use Hugomyb\FilamentMediaAction\Forms\Components\Actions\MediaAction;
 class ViewSubmission extends ViewRecord
 {
     protected static string $resource = SubmissionResource::class;
+
+    protected static ?string $title = 'Detail Pengajuan';
+
+    public function getBreadcrumb(): string
+    {
+        return 'Detail';
+    }
+
     protected function authorizeAccess(): void
     {
         $user = Auth::user(); // Dapatkan user yang sedang login
@@ -81,7 +89,7 @@ class ViewSubmission extends ViewRecord
     }
     public function FormAdmin(): array
     {
-        $record = $this->getRecord()->load('user');
+        $record = $this->getRecord();
         
         return [
             'form' => $this->form(

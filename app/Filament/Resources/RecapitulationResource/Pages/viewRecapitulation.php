@@ -12,6 +12,13 @@ class viewRecapitulation extends ViewRecord
 {
     protected static string $resource = RecapitulationResource::class;
 
+    protected static ?string $title = 'Detail Rekapitulasi';
+
+    public function getBreadcrumb(): string
+    {
+        return 'Detail';
+    }
+
     protected function makeInfolist(): Infolist
     {
         return parent::makeInfolist()

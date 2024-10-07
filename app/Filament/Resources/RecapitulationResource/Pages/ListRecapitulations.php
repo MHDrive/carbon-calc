@@ -2,22 +2,25 @@
 
 namespace App\Filament\Resources\RecapitulationResource\Pages;
 
-use Filament\Actions as ActionsExport;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use App\Models\Calculation;
 use App\Models\Recapitulation;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RecapitulationExport;
+use Filament\Actions as ActionsExport;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Forms\Components\Placeholder;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Forms\Components\Actions;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Exports\RecapitulationExporter;
 use App\Filament\Resources\RecapitulationResource;
 
@@ -112,7 +115,7 @@ class ListRecapitulations extends ListRecords
                         ])
                 ])
                 ->modalWidth(MaxWidth::Small)
-                ->action(fn(array $data) => Excel::download(new RecapitulationExport($data), 'invoices.csv', \Maatwebsite\Excel\Excel::XLSX))
+                ->action(fn(array $data) => Excel::download(new RecapitulationExport($data, Recapitulation::where('user_id', Auth::user()->id)->get()), 'invoices.csv', \Maatwebsite\Excel\Excel::XLSX))
         ];
     }
 }

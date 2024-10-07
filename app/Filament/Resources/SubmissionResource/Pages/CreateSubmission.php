@@ -31,7 +31,14 @@ class CreateSubmission extends CreateRecord
 {
     protected static string $resource = SubmissionResource::class;
 
+    protected static ?string $title = 'Pengajuan Berkas';
+
     public $newData;
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 
     protected function authorizeAccess(): void
     {
