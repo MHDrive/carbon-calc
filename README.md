@@ -28,8 +28,9 @@ adalah sebuah proyek yang bertujuan untuk menyediakan fitur kalkulator untuk men
 >   ```
 >  
 >  - cari file dengan nama `.env.example`, copy paste dan rename menjadi `.env` 
->  - Buka file `.env` lalu sesuaikan `DB_DATABASE, DB_USERNAME, DB_PASSWORD` dengan MySQL anda.
-> - lalu jalankan satu satu perintah berikut diterimal:
+>  - Buka file `.env` lalu sesuaikan `DB_DATABASE, DB_USERNAME, DB_PASSWORD` dengan MySQL anda, namun apabila anda menggunakan mysql default, anda bisa mengabaikan hal tersebut.
+>
+> - selanjutnya jalankan perintah berikut diterimal step by step:
 >   ```shell
 >    php artisan key:generate
 >
@@ -41,13 +42,13 @@ adalah sebuah proyek yang bertujuan untuk menyediakan fitur kalkulator untuk men
 >
 >    npm run dev
 >   ```
-> - lalu buka terminal baru, dan jalankan perintah berikut:
+> - lalu buka terminal baru, dan jalankan perintah berikut step by step:
 >   ```shell
 >     php artisan migrate --seed
 > 
 >     php artisan serve
 >   ```
->  - jalankan ini di browser anda localhost:8080/admin
+>  - jalankan ini di browser anda http://127.0.0.1:8000/admin
 >
 >  - login sebagai admin:
 >    ```shell 
