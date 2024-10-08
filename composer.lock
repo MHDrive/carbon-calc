@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85cfa610b4ad26509a4ec70e1394409d",
+    "content-hash": "e6f2791e881d5343228f57cc87f3600a",
     "packages": [
         {
             "name": "afatmustafa/blade-hugeicons",
@@ -132,81 +132,6 @@
                 "source": "https://github.com/AnourValar/eloquent-serialize/tree/1.2.23"
             },
             "time": "2024-07-12T10:52:26+00:00"
-        },
-        {
-            "name": "bezhansalleh/filament-language-switch",
-            "version": "3.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bezhanSalleh/filament-language-switch.git",
-                "reference": "29d724e38a6e112b0e36b9f9059a18461ec92f0f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bezhanSalleh/filament-language-switch/zipball/29d724e38a6e112b0e36b9f9059a18461ec92f0f",
-                "reference": "29d724e38a6e112b0e36b9f9059a18461ec92f0f",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^3.0",
-                "php": "^8.1|^8.2|^8.3",
-                "spatie/laravel-package-tools": "^1.9"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^6.0|^7.0|8.0",
-                "orchestra/testbench": "^7.0|^8.0|^9.0",
-                "pestphp/pest": "^2.34",
-                "pestphp/pest-plugin-laravel": "^2.3",
-                "spatie/laravel-ray": "^1.26"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "BezhanSalleh\\FilamentLanguageSwitch\\FilamentLanguageSwitchServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "BezhanSalleh\\FilamentLanguageSwitch\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bezhan Salleh",
-                    "email": "bezhan_salleh@yahoo.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Zero config Language Switch(Changer/Localizer) plugin for filamentphp admin",
-            "homepage": "https://github.com/bezhansalleh/filament-language-switch",
-            "keywords": [
-                "bezhanSalleh",
-                "filament-language-changer",
-                "filament-language-switch",
-                "filament-locale-changer",
-                "filament-localizer",
-                "filament-plugin",
-                "filamentphp",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/bezhanSalleh/filament-language-switch/issues",
-                "source": "https://github.com/bezhanSalleh/filament-language-switch/tree/3.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/bezhanSalleh",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-04-01T18:28:29+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -5224,68 +5149,6 @@
                 }
             ],
             "time": "2024-07-20T21:41:07+00:00"
-        },
-        {
-            "name": "plank/laravel-metable",
-            "version": "6.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/plank/laravel-metable.git",
-                "reference": "de76793a55b8bb19eeb181b05170b887192fbf0f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/plank/laravel-metable/zipball/de76793a55b8bb19eeb181b05170b887192fbf0f",
-                "reference": "de76793a55b8bb19eeb181b05170b887192fbf0f",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/database": "^10.10|^11.0",
-                "illuminate/support": "^10.10|^11.0",
-                "php": ">=8.1",
-                "phpoption/phpoption": "^1.8"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^7.2",
-                "guzzlehttp/promises": "^1.4",
-                "laravel/legacy-factories": "^1.0.4",
-                "mockery/mockery": "^1.4.2",
-                "nesbot/carbon": "^2.62.1",
-                "orchestra/testbench": "^8.0|^9.0",
-                "php-coveralls/php-coveralls": "^2.7.0",
-                "phpunit/phpunit": "^10.5",
-                "symfony/symfony": "^6.1|^7.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Plank\\Metable\\MetableServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Plank\\Metable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sean Fraser",
-                    "email": "sean@plankdesign.com"
-                }
-            ],
-            "description": "A package for attaching arbitrary data to Eloquent models",
-            "support": {
-                "issues": "https://github.com/plank/laravel-metable/issues",
-                "source": "https://github.com/plank/laravel-metable/tree/6.0.4"
-            },
-            "time": "2024-05-16T02:18:34+00:00"
         },
         {
             "name": "psr/cache",

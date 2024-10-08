@@ -6,6 +6,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use App\Models\Calculation;
 use App\Models\Recapitulation;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
 use Filament\Support\Enums\MaxWidth;
@@ -30,6 +31,7 @@ class ListRecapitulations extends ListRecords
 
     protected function getActions(): array
     {
+        // dd(Filament::getBrandName());
         return [
             ActionsExport\Action::make('Export')
                 ->form([
