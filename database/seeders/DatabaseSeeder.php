@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $permissions = [
+            "Profil:viewAny",
+            "Profil:view",
             "Profil:update",
             "Pengguna:viewAny",
             "Pengguna:view",
@@ -56,6 +58,8 @@ class DatabaseSeeder extends Seeder
 
         $roles = [
             "admin" => [
+                "Profil:viewAny",
+                "Profil:view",
                 "Profil:update",
                 "Pengguna:viewAny",
                 "Pengguna:view",
@@ -107,9 +111,9 @@ class DatabaseSeeder extends Seeder
         $admin = User::factory()->create([
             'email' => 'admin@gmail.com',
         ]);
-        
+
         $admin->syncRoles(UserRoleEnum::ADMIN);
-        
+
 
         $guest = User::factory()->create([
             'email' => 'guest@gmail.com',
