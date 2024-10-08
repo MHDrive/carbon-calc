@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\Calculations\Resources\ClimateDryResource\Pages;
 
 use Filament\Actions;
+use Filament\Actions\Action;
 use App\Enums\ClimateTypeEnum;
 use App\Enums\FormulaTypeEnum;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +113,19 @@ class CreateBrown1997Dry extends CreateRecord
         $this->newData = $record;
 
         return $record;
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return Action::make('createAnother')
+            ->hidden();
+    }
+
+    protected function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+            ->label('Hitung')
+            ->submit('create');
     }
 
 

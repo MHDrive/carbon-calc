@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Plank\Metable\Meta;
-use Plank\Metable\Metable;
 use App\Enums\ClimateTypeEnum;
 use App\Models\Calculation as Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ClimateDry extends Model
 {
-    use HasFactory, Metable;
+    use HasFactory;
 
     protected $table = 'calculations';
 
@@ -24,8 +22,4 @@ class ClimateDry extends Model
         });
     }
 
-//     public function meta()
-// {
-//     return $this->morphMany(Meta::class, 'metable');
-// }
 }

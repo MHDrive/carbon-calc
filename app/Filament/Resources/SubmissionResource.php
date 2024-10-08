@@ -69,6 +69,7 @@ class SubmissionResource extends Resource
                                 ]),
                                 SpatieMediaLibraryFileUpload::make('file_submission')
                                     ->label('Upload File')
+                                    ->acceptedFileTypes(['application/pdf'])
                                     // ->hiddenLabel()
                                     ->collection('file_submissions'),
                                 Forms\Components\Group::make()

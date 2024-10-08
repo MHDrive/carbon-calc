@@ -5,7 +5,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Filament\Panel;
-use Plank\Metable\Metable;
 use App\Enums\UserRoleEnum;
 use Spatie\Image\Enums\Fit;
 use App\Models\Recapitulation;
@@ -23,7 +22,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar, HasName
 {
-    use HasFactory, Notifiable, InteractsWithMedia, Metable;
+    use HasFactory, Notifiable, InteractsWithMedia;
     /**
      * The attributes that are mass assignable.
      *
@@ -117,9 +116,5 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
     public function institutes(): BelongsTo
     {
         return $this->belongsTo(Institute::class, 'institute_id', 'id');
-    }
-    public function recapitulation(): HasMany
-    {
-        return $this->hasMany(Recapitulation::class);
     }
 }
