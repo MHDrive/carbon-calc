@@ -80,6 +80,12 @@ class AdminPanelProvider extends PanelProvider
             //         }
             //     }
             // )
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_BEFORE,
+                fn() => Blade::render(<<<'Blade'
+                        @vite(['resources/js/app.js'])
+                    Blade)
+            )
             ->navigationItems(static::getNavigationItems())
             // ->unsavedChangesAlerts()
             ->login(MyLogin::class)
