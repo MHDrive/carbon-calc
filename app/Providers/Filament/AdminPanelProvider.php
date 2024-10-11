@@ -80,6 +80,12 @@ class AdminPanelProvider extends PanelProvider
             //         }
             //     }
             // )
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_BEFORE,
+                fn() => Blade::render(<<<'Blade'
+                        @vite(['resources/js/app.js'])
+                    Blade)
+            )
             ->navigationItems(static::getNavigationItems())
             // ->unsavedChangesAlerts()
             ->login(MyLogin::class)
@@ -143,7 +149,7 @@ class AdminPanelProvider extends PanelProvider
                     }
                     return route('filament.admin.resources.submissions.create');
                 })
-                ->icon('heroicon-o-user')
+                ->icon('heroicon-o-paper-airplane')
                 ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.submissions.create') || request()->routeIs('filament.admin.resources.submissions.view'))
                 ->hidden(fn() => (auth()->user()->isAdmin()))
                 ->sort(3),

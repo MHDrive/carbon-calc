@@ -5,10 +5,11 @@ namespace App\Filament\Resources\UserResource\Pages;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
@@ -27,16 +28,22 @@ class CreateUser extends CreateRecord
     public function getSteps(): array
     {
         return [
-            Section::make()
-                ->description('Silahkan isi form untuk menambahkan data user baru')
-                ->aside()
+            Section::make('Silahkan isi form untuk menambahkan data user baru')
                 ->schema([
-                    Group::make()
-                        ->schema(UserResource::getImageUserFormSchema()),
-                    Group::make()
-                        ->schema(UserResource::getDetailsUserFormSchema()),
-                    Group::make()
-                        ->schema(UserResource::getPasswordFormSchema()),
+                    Split::make([
+                        Section::make([
+                            Group::make()
+                                ->schema(UserResource::getDetailsUserFormSchema()),
+                            Group::make()
+                                ->schema(UserResource::getPasswordFormSchema()),
+                        ]),
+                        Section::make([
+                            Group::make()
+                                ->schema(UserResource::getImageUserFormSchema()),
+                        ])->grow(false),
+                    ])->from('md')
+
+
                 ])
         ];
     }

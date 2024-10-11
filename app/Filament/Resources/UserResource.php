@@ -23,13 +23,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use App\Services\Classes\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Forms\Components\Group;
 use League\CommonMark\Extension\Attributes\Node\Attributes;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
 
     protected static ?string $pluralModelLabel = 'Pengguna';
 
@@ -39,15 +40,16 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Grid::make(3)
                     ->schema([
-                        Forms\Components\Split::make([
-                            Forms\Components\Section::make(static::getImageUserFormSchema()),
-                            Forms\Components\Section::make('Ganti Sandi Akun')
-                                ->schema(static::getPasswordFormSchema())->grow(false),
-                        ])->from('2xl'),
+                        Group::make()
+                            ->schema([
+                                Forms\Components\Section::make(static::getImageUserFormSchema()),
+                                Forms\Components\Section::make('Ganti Sandi Akun')
+                                    ->schema(static::getPasswordFormSchema())
+                            ]),
                         Forms\Components\Section::make()
                             ->schema(static::getDetailsUserFormSchema())->columnSpan(2),
                     ])
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -60,7 +62,7 @@ class UserResource extends Resource
             //         ->exporter(UserExporter::class)
             // ])
             ->columns([
-                Tables\Columns\TextColumn::make('index')
+                Tables\Columns\TextColumn::make('No')
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('full_name')
                     ->label('Full Name')
@@ -86,7 +88,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make(),
                 // ->before(function ($record) {
                 //     $data = $record->purgeMeta();
                 //     return $data;
@@ -178,8 +180,6 @@ class UserResource extends Resource
                 ->label('Username')
                 ->minLength(3)
                 ->maxLength(50),
-            Forms\Components\ToggleButtons::make('roles')
-                ->label('Role '),
             Forms\Components\TextInput::make('number_unique')
                 ->label('NPM/NIP/NIK')
                 ->minLength(10)

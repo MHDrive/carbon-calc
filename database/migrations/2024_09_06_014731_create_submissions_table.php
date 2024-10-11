@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
-            $table->text('notes')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->foreignIdFor(User::class); // user_id
+            $table->text('notes')->nullable(); // keterangan / catatan admin untuk memberitahukan ke user.
+            $table->boolean('is_active')->default(true); // 
             $table->timestamp('granted_at')->nullable(); // Tanggal izin diberikan
             $table->timestamp('expires_at')->nullable(); // Tanggal izin berakhir
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
