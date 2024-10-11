@@ -59,14 +59,14 @@ class ProfileUser extends BaseProfile
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('first_name')
-                                    ->label('First Name')
-                                    ->minLength(3)
-                                    ->maxLength(50)
-                                    ->autofocus(),
-                                Forms\Components\TextInput::make('last_name')
-                                    ->label('Last Name')
-                                    ->minLength(3)
-                                    ->maxLength(50),
+                                ->label('Nama Pertama')
+                                ->minLength(3)
+                                ->maxLength(50)
+                                ->autofocus(),
+                            Forms\Components\TextInput::make('last_name')
+                                ->label('Nama Terakhir')
+                                ->minLength(3)
+                                ->maxLength(50),
                                 Forms\Components\TextInput::make('username')
                                     ->label('Username')
                                     ->minLength(3)

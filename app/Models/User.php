@@ -101,12 +101,12 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
             ->nonQueued();
     }
 
-    public function scopeMediaUserFirst($query, $collectionName)
-    {
-        return $query->whereHas('media', function ($q) use ($collectionName) {
-            $q->where('collection_name', $collectionName);
-        });
-    }
+    // public function scopeMediaUserFirst($query, $collectionName)
+    // {
+    //     return $query->whereHas('media', function ($q) use ($collectionName) {
+    //         $q->where('collection_name', $collectionName);
+    //     });
+    // }
 
     public function submissions(): HasMany
     {

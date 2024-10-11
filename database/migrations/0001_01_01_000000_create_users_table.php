@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
-            $table->string('username');
+            $table->string('first_name'); // nama pertama
+            $table->string('last_name')->nullable(); // name lastname
+            $table->string('username'); // username
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('number_unique')->nullable();
-            $table->string('phone_number')->nullable();
-            $table->boolean('access_calc')->default(false);
+            $table->string('number_unique')->nullable(); // npm/ nip / nik
+            $table->string('phone_number')->nullable(); // nomor hp
+            $table->boolean('access_calc')->default(false); // kondisi user boleh mengakses kalkulator.
             $table->enum('roles', ['admin', 'guest'])->default('guest');
             $table->string('password');
             $table->rememberToken();

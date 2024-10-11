@@ -15,7 +15,6 @@ use Illuminate\Validation\ValidationException;
 
 class MyLogin extends BaseLogin
 {
-
     // Membuat Form input Login 
     protected function getForms(): array
     {
@@ -74,15 +73,5 @@ class MyLogin extends BaseLogin
         throw ValidationException::withMessages([
             'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
         ]);
-    }
-
-    public function hasLogo(): bool
-    {
-        return true;
-    }
-
-    public function getHeading(): string | Htmlable
-    {
-        return __('filament-panels::pages/auth/login.heading');
     }
 }
